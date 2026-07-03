@@ -328,6 +328,7 @@
     line-height: 1.85;
     text-align:left;
     margin-bottom: 18px;
+    white-space: pre-line;
   }
 
   /* 改：結果頁新增五色帶 hero strip（從主色淡到白） */
@@ -718,6 +719,19 @@ const types = {
   E: {key:"E", name:"自媒體/IP教練", en:"Self-Media Coach", emoji:"📱", color:"#5b9bd5",
       desc:"你的天賦，是讓價值被更多人看見。你對內容創作、說故事、經營個人品牌充滿興趣，也樂於嘗試新的表達方式。你不只是分享，而是在幫助團隊被更多人認識。"}
 };
+
+const dualTypeDescriptions = {
+  AB: "組合優勢｜你既能讓人安心，也能把複雜的事情拆解清楚；別人不只願意相信你，也知道下一步怎麼做。\n最適合｜新人啟動、一對一陪跑與流程教學，先理解卡點，再給出剛剛好的工具。\n留意｜不要太快替對方解決一切；保留空間讓他自己練習，才能真正建立能力。",
+  AC: "組合優勢｜你擅長以關心建立信任，再用真實的產品經驗回應需求，讓分享自然、不像推銷。\n最適合｜顧客關係經營、產品體驗追蹤與生活型健康陪伴，把一次購買發展成長期信任。\n留意｜別因為怕造成壓力而只陪伴、不提出清楚建議；溫柔也可以很有方向。",
+  AD: "組合優勢｜你能先接住一個人的不安，再幫他看見可能性並鼓起勇氣行動，是兼具溫度與推進力的教練。\n最適合｜陪伴猶豫中的新人、邀約前演練與低潮重啟，讓對方感到被理解又願意跨出一步。\n留意｜分清楚鼓勵與施壓；用提問確認那一步是對方真正想走的，而不是替他決定。",
+  AE: "組合優勢｜你能聽見人的真實故事，也懂得把其中的價值轉化成有共鳴的內容，讓信任自然擴散。\n最適合｜人物故事、社群互動、見證內容與個人品牌定位，讓鏡頭前後都保有真誠。\n留意｜分享前先尊重隱私與界線；不要只追求感動或流量，長期一致比偶爾爆紅更重要。",
+  BC: "組合優勢｜你兼具產品經驗與系統思維，能把『為什麼有效』整理成別人容易理解、容易照做的方法。\n最適合｜產品教學、體驗流程、顧客追蹤 SOP 與新人零售訓練，提升團隊服務的一致性。\n留意｜避免資訊一次給太多；先抓住對方當下最需要的一件事，再逐步補充細節。",
+  BD: "組合優勢｜你不只會點燃行動，也能把行動變成可複製的步驟，讓熱情不會停在口號。\n最適合｜新人啟動、邀約流程、團隊挑戰與招募訓練，把目標拆成每天做得到的任務。\n留意｜不要只看速度和完成率；不同的人需要不同節奏，流程應該服務人，而不是綁住人。",
+  BE: "組合優勢｜你能把工具、流程與內容創作結合，將一次靈感整理成穩定產出的系統，是團隊的內容效率引擎。\n最適合｜內容 SOP、AI 工具導入、素材管理與社群排程，幫助夥伴更輕鬆地持續曝光。\n留意｜別為了最佳化而失去人味；工具應放大真實觀點，而不是製造大量相似內容。",
+  CD: "組合優勢｜你能從真實產品價值建立信任，再自然地帶人看見事業機會，讓零售與招募彼此支撐。\n最適合｜從顧客到夥伴的培育、產品故事分享與商機說明，讓機會建立在實際體驗之上。\n留意｜不要把每位顧客都當成招募對象；先尊重他的需求與意願，關係才走得長久。",
+  CE: "組合優勢｜你擅長把產品體驗轉化成清楚、有畫面的內容，讓看不見的價值被更多人理解。\n最適合｜產品實測、生活情境短影音、顧客故事與教育型內容，用真實細節累積可信度。\n留意｜避免誇大效果或只呈現完美結果；清楚標示個人經驗並遵守產品宣稱規範。",
+  DE: "組合優勢｜你同時具備號召力與傳播力，能把願景說得令人想參與，並透過內容快速放大影響。\n最適合｜招募活動、直播、短影音企劃與團隊品牌造勢，將線上關注轉化為真實行動。\n留意｜避免只追求聲量與情緒高點；承諾之後要有清楚跟進，影響力才會沉澱成信任。"
+};
 const optKeys = ["A","B","C","D","E"];
 
 let current = 0;
@@ -899,7 +913,9 @@ function getResultRanking(){
   const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
   const topScore = scores[sorted[0]];
   const primaryKeys = sorted.filter(k => scores[k] === topScore);
-  const secondaryKey = sorted.find(k => scores[k] < topScore) || null;
+  const secondaryKey = primaryKeys.length === 1
+    ? sorted.find(k => scores[k] < topScore) || null
+    : null;
   return {sorted, primaryKeys, secondaryKey};
 }
 
@@ -916,9 +932,12 @@ function showResult(celebrate = true){
   document.getElementById("resultEmoji").textContent = primaryTypes.map(t => t.emoji).join("");
   document.getElementById("resultTitle").textContent = `${userName ? userName + "，" : ""}你是「${primaryNames}」${isTie ? "並列主修" : "型"}`;
   document.getElementById("resultSub").textContent = primaryTypes.map(t => t.en).join(" × ");
-  document.getElementById("resultDesc").textContent = isTie
-    ? `你的最高分由 ${primaryTypes.map(t => t.name).join("、")} 並列，這些都是你的主修天賦。`
-    : primaryTypes[0].desc;
+  const dualKey = primaryKeys.slice().sort().join("");
+  document.getElementById("resultDesc").textContent = primaryTypes.length === 2
+    ? dualTypeDescriptions[dualKey]
+    : isTie
+      ? `你的最高分由 ${primaryTypes.map(t => t.name).join("、")} 並列，這些都是你的主修天賦。你擁有跨領域的帶人能力，可以依不同情境切換最適合的角色。`
+      : primaryTypes[0].desc;
 
   const secondaryBox = document.getElementById("secondaryBox");
   if (secondaryKey) {
@@ -1032,7 +1051,7 @@ async function submitResult(){
     name: userName,
     timestamp: new Date().toISOString(),
     primary: primaryKeys.map(k => types[k].name).join("、"),
-    secondary: secondaryKey ? types[secondaryKey].name : "無（全部並列）",
+    secondary: secondaryKey ? types[secondaryKey].name : (primaryKeys.length > 1 ? "無（並列主修）" : "無"),
     scoreA: scores.A, scoreB: scores.B, scoreC: scores.C, scoreD: scores.D, scoreE: scores.E,
     aiAdvisorInterest: bonusAnswer || "未填答"
   };
