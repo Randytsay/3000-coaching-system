@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7EC">
 <meta name="description" content="20 題測出你是哪種教練：關係 / 工具 / 零售 / 招募 / 自媒體。五力陪跑系統。">
 <meta name="format-detection" content="telephone=no">
@@ -510,10 +510,10 @@
       <div class="bt">最後一個小問題（不影響上面的分數）</div>
       <div class="bd">團隊裡有一個特別的角色——AI賦能顧問，負責幫五位教練都用上更好用的AI工具。你會不會想往這個方向發展看看？</div>
       <div class="bonus-opts" id="bonusOpts">
-        <div class="bonus-opt" data-v="很想！我對AI工具特別有熱情">🙋‍♀️ 很想！我對AI工具特別有熱情</div>
-        <div class="bonus-opt" data-v="有點興趣，可以再了解看看">🤔 有點興趣，可以再了解看看</div>
-        <div class="bonus-opt" data-v="先專心發展我的主修天賦就好">🌱 先專心發展我的主修天賦就好</div>
-        <div class="bonus-opt" data-v="還不確定，之後再說">💭 還不確定，之後再說</div>
+        <button type="button" class="bonus-opt" data-v="很想！我對AI工具特別有熱情">🙋‍♀️ 很想！我對AI工具特別有熱情</button>
+        <button type="button" class="bonus-opt" data-v="有點興趣，可以再了解看看">🤔 有點興趣，可以再了解看看</button>
+        <button type="button" class="bonus-opt" data-v="先專心發展我的主修天賦就好">🌱 先專心發展我的主修天賦就好</button>
+        <button type="button" class="bonus-opt" data-v="還不確定，之後再說">💭 還不確定，之後再說</button>
       </div>
     </div>
     <div class="action-btns">
@@ -534,7 +534,7 @@
     <div class="secondary-box" id="secondaryBox"></div>
     <div class="action-btns">
       <button id="submitBtn" onclick="submitResult()">📤 送出結果給總教練</button>
-      <button id="retryBtn" onclick="location.reload()">🔄 重新測一次</button>
+      <button id="retryBtn" onclick="resetQuiz()">🔄 重新測一次</button>
     </div>
     <div id="submitStatus"></div>
   </div>
@@ -707,6 +707,58 @@ let current = 0;
 let scores = {A:0,B:0,C:0,D:0,E:0};
 let userName = "";
 let bonusAnswer = "";
+let isTransitioning = false;
+let isSubmitting = false;
+let submitted = false;
+
+const STORAGE_KEY = "coachingQuizProgressV1";
+
+function saveProgress(screen){
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+      current, scores, userName, bonusAnswer, screen, submitted
+    }));
+  } catch (error) {
+    console.warn("無法暫存測驗進度", error);
+  }
+}
+
+function restoreProgress(){
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
+    const validScores = saved && optKeys.every(k => Number.isInteger(saved.scores?.[k]) && saved.scores[k] >= 0);
+    const total = validScores ? optKeys.reduce((sum, k) => sum + saved.scores[k], 0) : -1;
+    if (!validScores || !Number.isInteger(saved.current) || saved.current < 0 || saved.current > questions.length || total !== saved.current) return;
+
+    current = saved.current;
+    scores = saved.scores;
+    userName = typeof saved.userName === "string" ? saved.userName : "";
+    bonusAnswer = typeof saved.bonusAnswer === "string" ? saved.bonusAnswer : "";
+    submitted = saved.submitted === true;
+    document.getElementById("userName").value = userName;
+
+    if (current > 0 && current < questions.length) {
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("quizScreen").style.display = "block";
+      renderMiniScores();
+      renderQuestion();
+    } else if (current === questions.length && saved.screen === "result") {
+      showResult(false);
+    } else if (current === questions.length) {
+      showBonus();
+      const selected = [...document.querySelectorAll(".bonus-opt")].find(el => el.dataset.v === bonusAnswer);
+      if (selected) selected.classList.add("selected");
+    }
+  } catch (error) {
+    sessionStorage.removeItem(STORAGE_KEY);
+    console.warn("測驗暫存資料已重設", error);
+  }
+}
+
+function resetQuiz(){
+  sessionStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
 
 // Fisher-Yates 洗牌：只打亂顯示順序，type 屬性隨物件移動，不影響計分
 function shuffle(array){
@@ -747,9 +799,11 @@ function startQuiz(){
   document.getElementById("quizScreen").style.display="block";
   renderMiniScores();
   renderQuestion();
+  saveProgress("quiz");
 }
 
 function renderQuestion(){
+  isTransitioning = false;
   const q = questions[current];
   document.getElementById("qIndexLabel").textContent = `第 ${current+1} / ${questions.length} 題`;
   /* 改：已答題數 / 總題數（最後一題顯示 100% 而非 95%） */
@@ -775,9 +829,13 @@ function renderQuestion(){
 }
 
 function selectOption(type){
+  if (isTransitioning || !optKeys.includes(type)) return;
+  isTransitioning = true;
+  document.querySelectorAll("#optionsWrap .opt-btn").forEach(btn => btn.disabled = true);
   scores[type]++;
   updateMiniScores();
   current++;
+  saveProgress(current < questions.length ? "quiz" : "bonus");
   if(current < questions.length){
     setTimeout(renderQuestion, 200);
   } else {
@@ -794,26 +852,44 @@ function showBonus(){
       document.querySelectorAll(".bonus-opt").forEach(o=>o.classList.remove("selected"));
       el.classList.add("selected");
       bonusAnswer = el.getAttribute("data-v");
+      saveProgress("bonus");
     };
   });
 }
 
-function showResult(){
+function getResultRanking(){
+  const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
+  const topScore = scores[sorted[0]];
+  const primaryKeys = sorted.filter(k => scores[k] === topScore);
+  const secondaryKey = sorted.find(k => scores[k] < topScore) || null;
+  return {sorted, primaryKeys, secondaryKey};
+}
+
+function showResult(celebrate = true){
   document.getElementById("bonusScreen").style.display="none";
   document.getElementById("resultScreen").style.display="block";
   window.scrollTo({top:0, behavior:"smooth"});
 
-  const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
-  const primary = types[sorted[0]];
-  const secondary = types[sorted[1]];
+  const {sorted, primaryKeys, secondaryKey} = getResultRanking();
+  const primaryTypes = primaryKeys.map(k => types[k]);
+  const primaryNames = primaryTypes.map(t => t.name).join(" × ");
+  const isTie = primaryTypes.length > 1;
 
-  document.getElementById("resultEmoji").textContent = primary.emoji;
-  document.getElementById("resultTitle").textContent = `${userName}，你是「${primary.name}」型`;
-  document.getElementById("resultSub").textContent = primary.en;
-  document.getElementById("resultDesc").textContent = primary.desc;
+  document.getElementById("resultEmoji").textContent = primaryTypes.map(t => t.emoji).join("");
+  document.getElementById("resultTitle").textContent = `${userName ? userName + "，" : ""}你是「${primaryNames}」${isTie ? "並列主修" : "型"}`;
+  document.getElementById("resultSub").textContent = primaryTypes.map(t => t.en).join(" × ");
+  document.getElementById("resultDesc").textContent = isTie
+    ? `你的最高分由 ${primaryTypes.map(t => t.name).join("、")} 並列，這些都是你的主修天賦。`
+    : primaryTypes[0].desc;
 
-  document.getElementById("secondaryBox").innerHTML =
-    `<b>${secondary.emoji} 你的副修天賦：${secondary.name}</b><br>${secondary.desc}`;
+  const secondaryBox = document.getElementById("secondaryBox");
+  if (secondaryKey) {
+    const secondary = types[secondaryKey];
+    secondaryBox.innerHTML = `<b>${secondary.emoji} 你的副修天賦：${secondary.name}</b><br>${secondary.desc}`;
+    secondaryBox.style.display = "block";
+  } else {
+    secondaryBox.style.display = "none";
+  }
 
   const chart = document.getElementById("scoreChart");
   chart.innerHTML = "";
@@ -835,7 +911,13 @@ function showResult(){
     });
   }, 100);
 
-  launchConfetti();
+  saveProgress("result");
+  if (submitted) {
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "✅ 結果已送出";
+  }
+  if (celebrate) launchConfetti();
 }
 
 function launchConfetti(){
@@ -876,8 +958,9 @@ function launchConfetti(){
 // ============ 串接 Google Sheets（請貼上你的 Apps Script Web App 網址） ============
 const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbypdgp6Vx76M7ntN0r_jdrYcViMYpwDAcGr64z2QHQKatCAwhX9D4Uvk7WG-IkjKxsZFQ/exec";
 
-function submitResult(){
-  const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
+async function submitResult(){
+  if (isSubmitting || submitted) return;
+  const {primaryKeys, secondaryKey} = getResultRanking();
   /* 送出前檢查：未填名字時在結果頁直接提示，不跳回首頁中斷流程 */
   if (!userName || !userName.trim()) {
     const statusEl = document.getElementById("submitStatus");
@@ -915,8 +998,8 @@ function submitResult(){
   const payload = {
     name: userName,
     timestamp: new Date().toISOString(),
-    primary: types[sorted[0]].name,
-    secondary: types[sorted[1]].name,
+    primary: primaryKeys.map(k => types[k].name).join("、"),
+    secondary: secondaryKey ? types[secondaryKey].name : "無（全部並列）",
     scoreA: scores.A, scoreB: scores.B, scoreC: scores.C, scoreD: scores.D, scoreE: scores.E,
     aiAdvisorInterest: bonusAnswer || "未填答"
   };
@@ -929,18 +1012,38 @@ function submitResult(){
     return;
   }
 
+  const submitBtn = document.getElementById("submitBtn");
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  isSubmitting = true;
+  submitBtn.disabled = true;
   statusEl.textContent = "傳送中...";
-  fetch(GOOGLE_SHEET_WEBHOOK_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  }).then(()=>{
+  try {
+    const response = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    submitted = true;
+    submitBtn.textContent = "✅ 結果已送出";
     statusEl.textContent = "✅ 已成功送出給總教練！";
-  }).catch(()=>{
-    statusEl.textContent = "❌ 送出失敗，請確認網址設定";
-  });
+    saveProgress("result");
+  } catch (error) {
+    submitBtn.disabled = false;
+    statusEl.style.color = "var(--c-accent)";
+    statusEl.textContent = error.name === "AbortError"
+      ? "❌ 傳送逾時，請稍後再試"
+      : "❌ 無法確認送出成功，請稍後再試";
+    console.error("送出結果失敗", error);
+  } finally {
+    clearTimeout(timeoutId);
+    isSubmitting = false;
+  }
 }
+
+restoreProgress();
 </script>
 
 </body>
