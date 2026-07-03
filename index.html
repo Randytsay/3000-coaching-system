@@ -518,8 +518,9 @@
       </div>
     </div>
     <div class="action-btns">
-      <button id="bonusNextBtn" style="background:linear-gradient(135deg,#a685e2,#8e6fce); color:#fff;" onclick="showResult()">看看我的天賦結果 →</button>
+      <button id="submitBtn" style="background:linear-gradient(135deg,#a685e2,#8e6fce); color:#fff;" onclick="submitResult()">📤 送出並查看天賦結果 →</button>
     </div>
+    <div id="submitStatus"></div>
   </div>
 
   <!-- 結果頁 -->
@@ -534,10 +535,8 @@
     <div class="score-chart" id="scoreChart"></div>
     <div class="secondary-box" id="secondaryBox"></div>
     <div class="action-btns">
-      <button id="submitBtn" onclick="submitResult()">📤 送出結果給總教練</button>
       <button id="retryBtn" onclick="resetQuiz()">🔄 重新測一次</button>
     </div>
-    <div id="submitStatus"></div>
   </div>
 
 </div>
@@ -550,8 +549,8 @@
 const questions = [
   {q:"當朋友遇到困難時，你最自然的反應是？", opts:[
     {t:"先陪他聊聊，了解他的心情", type:"A"},
-    {t:"教他怎麼用工具或方法解決", type:"B"},
-    {t:"跟他分享一個產品或方法讓他試試", type:"C"},
+    {t:"幫他拆解問題，教他用合適的工具逐步處理", type:"B"},
+    {t:"分享自己用過且有效的產品經驗，讓他參考", type:"C"},
     {t:"鼓勵他勇敢踏出第一步", type:"D"},
     {t:"幫他想想怎麼把這件事說得更有感染力", type:"E"}
   ]},
@@ -743,7 +742,7 @@ function restoreProgress(){
       document.getElementById("quizScreen").style.display = "block";
       renderMiniScores();
       renderQuestion();
-    } else if (current === questions.length && saved.screen === "result") {
+    } else if (current === questions.length && saved.screen === "result" && submitted) {
       showResult(false);
     } else if (current === questions.length) {
       showBonus();
@@ -913,11 +912,6 @@ function showResult(celebrate = true){
   }, 100);
 
   saveProgress("result");
-  if (submitted) {
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "✅ 已送出請求";
-  }
   if (celebrate) launchConfetti();
 }
 
@@ -962,11 +956,11 @@ const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbypdgp
 async function submitResult(){
   if (isSubmitting || submitted) return;
   const {primaryKeys, secondaryKey} = getResultRanking();
-  /* 送出前檢查：未填名字時在結果頁直接提示，不跳回首頁中斷流程 */
+  /* 送出前檢查：未填名字時在彩蛋頁直接提示，不跳回首頁中斷流程 */
   if (!userName || !userName.trim()) {
     const statusEl = document.getElementById("submitStatus");
     statusEl.style.color = "var(--c-accent)";
-    /* 把 name-input 借回結果頁：用 .missing 樣式 + 顯示提示 */
+    /* 在彩蛋頁顯示名字輸入框，再繼續送出 */
     statusEl.innerHTML = `
       <div class="inline-name-form" style="margin: 8px 0 4px;">
         <div style="font-weight:700; margin-bottom:8px;">⚠️ 送出前需要你的名字</div>
@@ -1028,9 +1022,8 @@ async function submitResult(){
       signal: controller.signal
     });
     submitted = true;
-    submitBtn.textContent = "✅ 已送出請求";
-    statusEl.textContent = "✅ 結果已送出，請至 Google Sheets 確認";
     saveProgress("result");
+    showResult();
   } catch (error) {
     submitBtn.disabled = false;
     statusEl.style.color = "var(--c-accent)";
