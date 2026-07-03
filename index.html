@@ -125,12 +125,9 @@
   /* 改：badge 改用 chip 樣式，不再撐滿寬，視覺密度更像預告 */
   .badge-row {
     display:flex; justify-content:center; gap:6px;
-    flex-wrap:nowrap; overflow-x:auto;
+    flex-wrap:wrap;
     margin: 20px 0 18px; padding: 4px 2px 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
   }
-  .badge-row::-webkit-scrollbar { display:none; }
   .badge {
     background:#fff;
     border:1.5px solid rgba(184,156,255,0.18);
@@ -457,6 +454,9 @@
   @media (min-width: 480px){
     .mini-score-label { display: block; margin-bottom: 1px; }
     .mini-score-item { font-size: 10px; }
+  }
+  @media (min-width: 560px){
+    .badge-row { flex-wrap:nowrap; }
   }
   @media (min-width: 640px){
     .float-emoji { display:block; }
