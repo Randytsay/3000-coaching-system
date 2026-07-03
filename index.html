@@ -915,7 +915,7 @@ function showResult(celebrate = true){
   if (submitted) {
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
-    submitBtn.textContent = "✅ 結果已送出";
+    submitBtn.textContent = "✅ 已送出請求";
   }
   if (celebrate) launchConfetti();
 }
@@ -1019,16 +1019,16 @@ async function submitResult(){
   submitBtn.disabled = true;
   statusEl.textContent = "傳送中...";
   try {
-    const response = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+    await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
+      mode: "no-cors",
+      headers: {"Content-Type":"text/plain;charset=UTF-8"},
       body: JSON.stringify(payload),
       signal: controller.signal
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     submitted = true;
-    submitBtn.textContent = "✅ 結果已送出";
-    statusEl.textContent = "✅ 已成功送出給總教練！";
+    submitBtn.textContent = "✅ 已送出請求";
+    statusEl.textContent = "✅ 結果已送出，請至 Google Sheets 確認";
     saveProgress("result");
   } catch (error) {
     submitBtn.disabled = false;
