@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>找到你的教練天賦｜五力陪跑系統</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { width:100%; overflow-x:hidden; }
+  body {
+    font-family: "Noto Sans TC", "Microsoft JhengHei", -apple-system, sans-serif;
+    min-height:100vh;
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb, #fbc2eb, #ffecd2);
+    background-size: 400% 400%;
+    animation: gradientBG 18s ease infinite;
+    display:flex; align-items:center; justify-content:center;
+    padding: max(16px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+    position:relative;
+  }
+  @keyframes gradientBG {
+    0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;}
+  }
+  .float-emoji {
+    position:fixed; font-size:clamp(16px,4vw,26px); opacity:0.4; z-index:0;
+    animation: floatUp 14s linear infinite;
+    user-select:none; pointer-events:none;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) rotate(0deg); opacity:0; }
+    10% { opacity:0.5; }
+    90% { opacity:0.5; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity:0; }
+  }
+  .card {
+    background:#fff;
+    border-radius:24px;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.18);
+    max-width:600px; width:100%;
+    padding: clamp(20px,5vw,32px) clamp(16px,5vw,28px) clamp(28px,6vw,40px);
+    position:relative; z-index:2;
+    animation: popIn 0.5s ease;
+  }
+  @keyframes popIn { from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
+
+  /* ---------- 開場頁 ---------- */
+  #startScreen { text-align:center; }
+  #startScreen h1 {
+    font-size:clamp(20px,5.5vw,26px); color:#5b2c82; margin-bottom:8px; line-height:1.3;
+  }
+  #startScreen .sub {
+    font-size:clamp(13px,3.5vw,15px); color:#888; margin-bottom:18px; line-height:1.7;
+  }
+  .badge-row { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:18px 0; }
+  .badge {
+    background:linear-gradient(135deg,#f6f9fc,#e9eefc);
+    border-radius:14px; padding:8px 10px; font-size:clamp(10px,2.8vw,12px);
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    min-width:62px; flex:1 1 62px; max-width:90px;
+  }
+  .badge .emo { font-size:clamp(18px,4.5vw,22px); }
+  .start-btn {
+    margin-top:10px; width:100%; max-width:280px;
+    background:linear-gradient(135deg,#ff8a65,#ff6f91);
+    color:#fff; border:none; padding:16px 24px;
+    border-radius:30px; font-size:clamp(15px,4vw,17px); font-weight:bold;
+    cursor:pointer; box-shadow:0 8px 20px rgba(255,111,145,0.4);
+    transition:transform 0.2s;
+    min-height:48px;
+  }
+  .start-btn:active { transform: scale(0.97); }
+  .name-input {
+    padding:12px 16px; border-radius:20px; border:1px solid #ddd;
+    width:100%; max-width:280px; font-size:15px; margin:14px 0;
+    -webkit-appearance:none;
+  }
+
+  /* ---------- 進度區 ---------- */
+  #quizScreen { display:none; }
+  .progress-wrap { margin-bottom:16px; }
+  .progress-top {
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:clamp(11px,3vw,13px); color:#999; margin-bottom:6px;
+  }
+  .progress-bar-bg {
+    width:100%; height:9px; background:#eee; border-radius:10px; overflow:hidden;
+  }
+  .progress-bar-fill {
+    height:100%; border-radius:10px;
+    background:linear-gradient(90deg,#ff9a9e,#fbc2eb,#a1c4fd);
+    width:0%; transition:width 0.4s ease;
+  }
+  .mini-scores { display:flex; gap:4px; margin-top:10px; flex-wrap:nowrap; }
+  .mini-score-item { flex:1; text-align:center; font-size:10px; color:#aaa; min-width:0; }
+  .mini-score-bar {
+    height:5px; border-radius:6px; background:#f0f0f0; overflow:hidden; margin-top:3px;
+  }
+  .mini-score-fill { height:100%; border-radius:6px; width:0%; transition:width 0.3s; }
+
+  .q-title {
+    font-size:clamp(15px,4.3vw,18px); font-weight:bold; color:#4a3b78;
+    margin:18px 0 14px; line-height:1.6; min-height:auto;
+  }
+  .options { display:flex; flex-direction:column; gap:10px; }
+  .opt-btn {
+    text-align:left; width:100%;
+    background:#f7f8fc;
+    border:2px solid transparent;
+    border-radius:16px;
+    padding:14px 14px;
+    font-size:clamp(13px,3.6vw,15px);
+    cursor:pointer;
+    transition: all 0.15s;
+    display:flex; align-items:center; gap:10px;
+    min-height:48px;
+    line-height:1.4;
+  }
+  .opt-btn:active {
+    border-color:#ffb6c1;
+    background:#fff0f3;
+    transform: scale(0.98);
+  }
+  .opt-key {
+    background:#e0e6ff; color:#5b2c82; font-weight:bold;
+    width:26px; height:26px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; flex-shrink:0;
+  }
+
+  /* ---------- 結果頁 ---------- */
+  #resultScreen { display:none; text-align:center; }
+  .result-emoji { font-size:clamp(48px,14vw,64px); margin-bottom:6px; animation: bounce 1s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+  #resultTitle { font-size:clamp(18px,5vw,23px); font-weight:bold; color:#5b2c82; margin-bottom:5px; line-height:1.4; }
+  #resultSub { font-size:clamp(13px,3.5vw,15px); color:#ff6f91; font-weight:bold; margin-bottom:14px; }
+  #resultDesc {
+    background:#fff8f0; border-radius:16px; padding:14px 16px;
+    font-size:clamp(12.5px,3.4vw,14px); color:#666; line-height:1.8; text-align:left; margin-bottom:18px;
+  }
+  .score-chart { display:flex; flex-direction:column; gap:9px; margin-bottom:18px; }
+  .score-row { display:flex; align-items:center; gap:8px; }
+  .score-label { width:clamp(78px,22vw,110px); font-size:clamp(11px,3vw,13px); text-align:left; color:#555; flex-shrink:0; }
+  .score-bar-bg { flex:1; height:13px; background:#f0f0f0; border-radius:10px; overflow:hidden; }
+  .score-bar-fill { height:100%; border-radius:10px; width:0%; transition:width 1s ease; }
+  .score-val { width:24px; font-size:12px; color:#999; text-align:right; flex-shrink:0; }
+  .secondary-box {
+    background:#eef7ff; border-radius:16px; padding:14px; margin-bottom:18px;
+    font-size:clamp(12.5px,3.4vw,14px); color:#4a5a78; text-align:left; line-height:1.7;
+  }
+
+  /* ---------- 彩蛋題（AI賦能顧問意願） ---------- */
+  .bonus-box {
+    background:linear-gradient(135deg,#eef4ff,#f5eaff);
+    border-radius:16px; padding:16px; margin-bottom:18px; text-align:left;
+  }
+  .bonus-box .bt {
+    font-size:clamp(13.5px,3.7vw,15px); font-weight:bold; color:#5b2c82; margin-bottom:6px;
+  }
+  .bonus-box .bd {
+    font-size:clamp(12px,3.2vw,13px); color:#777; margin-bottom:12px; line-height:1.6;
+  }
+  .bonus-opts { display:flex; flex-direction:column; gap:8px; }
+  .bonus-opt {
+    background:#fff; border:2px solid #e6e0f5; border-radius:12px;
+    padding:11px 12px; font-size:clamp(12.5px,3.4vw,14px); cursor:pointer;
+    text-align:left; display:flex; align-items:center; gap:8px; min-height:44px;
+    transition:all 0.15s;
+  }
+  .bonus-opt.selected { border-color:#a685e2; background:#f5f0ff; font-weight:bold; }
+
+  .action-btns { display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .action-btns button {
+    border:none; padding:14px 20px; border-radius:24px;
+    font-size:clamp(14px,3.8vw,15px); font-weight:bold; cursor:pointer;
+    width:100%; max-width:320px; min-height:48px;
+  }
+  #submitBtn { background:linear-gradient(135deg,#67d8b0,#4ecdc4); color:#fff; }
+  #retryBtn { background:#eee; color:#666; }
+  #submitStatus { margin-top:12px; font-size:12.5px; color:#4ecdc4; min-height:18px; }
+
+  .confetti {
+    position:fixed; top:-10px; width:8px; height:8px; z-index:999;
+    animation: fall linear forwards;
+  }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity:0.2; } }
+
+  @media (max-width: 380px){
+    .badge { min-width:52px; padding:6px 6px; }
+    .card { padding:16px 12px 24px; }
+  }
+  @media (min-width: 640px){
+    .float-emoji { display:block; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const emojis = ["❤️","🎯","🛍️","🛠️","📱","✨","🌟","🤖"];
+  const emojiCount = window.innerWidth < 640 ? 8 : 16;
+  for (let i=0;i<emojiCount;i++){
+    const el = document.createElement("div");
+    el.className="float-emoji";
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100+"vw";
+    el.style.animationDuration = (11+Math.random()*10)+"s";
+    el.style.animationDelay = (Math.random()*10)+"s";
+    document.body.appendChild(el);
+  }
+</script>
+
+<div class="card">
+
+  <!-- 開場頁 -->
+  <div id="startScreen">
+    <div style="font-size:clamp(38px,10vw,46px);">🧭✨</div>
+    <h1>找到你的教練天賦</h1>
+    <div class="sub">
+      這不是人格測驗，也沒有對錯。<br>
+      只是想問你一件事：<br>
+      <b>「當你想幫助別人成長時，你最自然會做什麼？」</b>
+    </div>
+    <div class="badge-row">
+      <div class="badge"><span class="emo">❤️</span>關係教練</div>
+      <div class="badge"><span class="emo">🎯</span>招募教練</div>
+      <div class="badge"><span class="emo">🛍️</span>零售教練</div>
+      <div class="badge"><span class="emo">🛠️</span>工具教練</div>
+      <div class="badge"><span class="emo">📱</span>自媒體/IP</div>
+    </div>
+    <div style="font-size:12.5px; color:#aaa; margin:8px 0 6px;">共 20 題＋1 個小彩蛋，約需 3-5 分鐘</div>
+    <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（選填）">
+    <br>
+    <button class="start-btn" onclick="startQuiz()">🚀 開始探索</button>
+  </div>
+
+  <!-- 測驗頁 -->
+  <div id="quizScreen">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="qIndexLabel">第 1 / 20 題</span>
+        <span id="qPercentLabel">5%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+      <div class="mini-scores" id="miniScores"></div>
+    </div>
+    <div class="q-title" id="qTitle"></div>
+    <div class="options" id="optionsWrap"></div>
+  </div>
+
+  <!-- 彩蛋題頁 -->
+  <div id="bonusScreen" style="display:none;">
+    <div style="text-align:center; font-size:40px; margin-bottom:8px;">🎁</div>
+    <div class="bonus-box">
+      <div class="bt">最後一個小問題（不影響上面的分數）</div>
+      <div class="bd">團隊裡有一個特別的角色——AI賦能顧問，負責幫五位教練都用上更好用的AI工具。你會不會想往這個方向發展看看？</div>
+      <div class="bonus-opts" id="bonusOpts">
+        <div class="bonus-opt" data-v="很想！我對AI工具特別有熱情">🙋‍♀️ 很想！我對AI工具特別有熱情</div>
+        <div class="bonus-opt" data-v="有點興趣，可以再了解看看">🤔 有點興趣，可以再了解看看</div>
+        <div class="bonus-opt" data-v="先專心發展我的主修天賦就好">🌱 先專心發展我的主修天賦就好</div>
+        <div class="bonus-opt" data-v="還不確定，之後再說">💭 還不確定，之後再說</div>
+      </div>
+    </div>
+    <div class="action-btns">
+      <button id="bonusNextBtn" style="background:linear-gradient(135deg,#a685e2,#8e6fce); color:#fff;" onclick="showResult()">看看我的天賦結果 →</button>
+    </div>
+  </div>
+
+  <!-- 結果頁 -->
+  <div id="resultScreen" style="display:none;">
+    <div class="result-emoji" id="resultEmoji">❤️</div>
+    <div id="resultTitle">你是關係教練型</div>
+    <div id="resultSub">Relationship Coach</div>
+    <div id="resultDesc"></div>
+    <div class="score-chart" id="scoreChart"></div>
+    <div class="secondary-box" id="secondaryBox"></div>
+    <div class="action-btns">
+      <button id="submitBtn" onclick="submitResult()">📤 送出結果給總教練</button>
+      <button id="retryBtn" onclick="location.reload()">🔄 重新測一次</button>
+    </div>
+    <div id="submitStatus"></div>
+  </div>
+
+</div>
+
+<script>
+// ============ 題目資料 ============
+// 每個選項都是 {t: 文字, type: 對應教練類型}
+// A=relation ❤️ / B=tool 🛠️ / C=retail 🛍️ / D=recruit 🎯 / E=self-media 📱
+// 顯示順序會被隨機打亂，但 type 計分邏輯固定不變
+const questions = [
+  {q:"當朋友遇到困難時，你最自然的反應是？", opts:[
+    {t:"先陪他聊聊，了解他的心情", type:"A"},
+    {t:"教他怎麼用工具或方法解決", type:"B"},
+    {t:"跟他分享一個產品或方法讓他試試", type:"C"},
+    {t:"鼓勵他勇敢踏出第一步", type:"D"},
+    {t:"幫他想想怎麼把這件事說得更有感染力", type:"E"}
+  ]},
+  {q:"新朋友第一次接觸美安，你最喜歡負責哪個環節？", opts:[
+    {t:"陪他聊天，了解他的需求", type:"A"},
+    {t:"示範操作 SHOP.COM 平台", type:"B"},
+    {t:"分享產品使用心得", type:"C"},
+    {t:"分享商機和願景", type:"D"},
+    {t:"經營一篇能吸引他的貼文或短片", type:"E"}
+  ]},
+  {q:"哪一件事最讓你有成就感？", opts:[
+    {t:"對方變得更有信心", type:"A"},
+    {t:"對方學會了一項技能", type:"B"},
+    {t:"對方開始使用產品並感受到改變", type:"C"},
+    {t:"對方願意給自己一個機會嘗試", type:"D"},
+    {t:"對方因為你的分享，開始認同這件事", type:"E"}
+  ]},
+  {q:"團隊聚會時，你通常自然扮演的角色是？", opts:[
+    {t:"傾聽陪伴的人", type:"A"},
+    {t:"負責技術／流程支援的人", type:"B"},
+    {t:"分享產品故事的人", type:"C"},
+    {t:"帶動氣氛、鼓勵大家行動的人", type:"D"},
+    {t:"拍照、記錄、把當下變成內容的人", type:"E"}
+  ]},
+  {q:"別人最常稱讚你什麼？", opts:[
+    {t:"很有耐心、很懂傾聽", type:"A"},
+    {t:"很會教、邏輯清楚", type:"B"},
+    {t:"很懂產品、很會照顧顧客", type:"C"},
+    {t:"很會鼓勵人、很有感染力", type:"D"},
+    {t:"很會表達、很有個人風格", type:"E"}
+  ]},
+  {q:"如果新人一直沒有行動，你會怎麼做？", opts:[
+    {t:"先關心他最近過得好不好", type:"A"},
+    {t:"幫他把步驟拆解得更簡單", type:"B"},
+    {t:"分享自己用產品的親身故事", type:"C"},
+    {t:"陪他一起練習邀約、給他勇氣", type:"D"},
+    {t:"幫他把自己的故事包裝得更吸引人", type:"E"}
+  ]},
+  {q:"你最喜歡學習哪一類的內容？", opts:[
+    {t:"心態調整與個人成長", type:"A"},
+    {t:"系統操作與流程效率", type:"B"},
+    {t:"健康知識與產品知識", type:"C"},
+    {t:"溝通表達與邀約技巧", type:"D"},
+    {t:"內容創作與個人品牌經營", type:"E"}
+  ]},
+  {q:"看到別人成功，你最先好奇的是？", opts:[
+    {t:"他是怎麼建立起這份信任的", type:"A"},
+    {t:"他用了什麼方法或工具", type:"B"},
+    {t:"他用了哪些產品、怎麼用的", type:"C"},
+    {t:"他是怎麼開口分享機會的", type:"D"},
+    {t:"他是怎麼把自己經營成一個品牌的", type:"E"}
+  ]},
+  {q:"如果團隊現在缺人手，你最願意主動補位的是？", opts:[
+    {t:"陪伴、關心新人", type:"A"},
+    {t:"教大家操作系統", type:"B"},
+    {t:"帶大家認識產品", type:"C"},
+    {t:"陪大家一起邀約", type:"D"},
+    {t:"幫忙拍照、寫文案、發貼文", type:"E"}
+  ]},
+  {q:"你最享受哪一種對話？", opts:[
+    {t:"深入聊心情與夢想", type:"A"},
+    {t:"一起解決卡關的問題", type:"B"},
+    {t:"聊健康、聊生活改變", type:"C"},
+    {t:"聊未來、聊機會與可能性", type:"D"},
+    {t:"聊怎麼把一件事說得更精彩", type:"E"}
+  ]},
+  {q:"別人向你請教時，你通常會先？", opts:[
+    {t:"問他現在的感受是什麼", type:"A"},
+    {t:"直接教他方法和步驟", type:"B"},
+    {t:"分享自己的親身案例", type:"C"},
+    {t:"陪他練習怎麼開口說", type:"D"},
+    {t:"幫他想一個更吸引人的說法", type:"E"}
+  ]},
+  {q:"哪一句話最像你？", opts:[
+    {t:"我希望別人感受到被支持", type:"A"},
+    {t:"我希望別人能獨立完成", type:"B"},
+    {t:"我希望別人變得更健康、更好", type:"C"},
+    {t:"我希望別人敢於跨出舒適圈", type:"D"},
+    {t:"我希望別人的努力被更多人看到", type:"E"}
+  ]},
+  {q:"如果可以挑一門課去上，你最想學？", opts:[
+    {t:"教練陪伴與傾聽技巧", type:"A"},
+    {t:"系統效率與流程管理", type:"B"},
+    {t:"營養保健與產品知識", type:"C"},
+    {t:"溝通表達與影響力", type:"D"},
+    {t:"內容創作與說故事技巧", type:"E"}
+  ]},
+  {q:"什麼樣的內容最容易吸引你？", opts:[
+    {t:"心靈成長、人物故事", type:"A"},
+    {t:"效率工具、SOP教學", type:"B"},
+    {t:"健康知識、產品實測", type:"C"},
+    {t:"人際互動、成功案例分享", type:"D"},
+    {t:"短影音、個人品牌經營案例", type:"E"}
+  ]},
+  {q:"朋友最常來找你幫忙處理的是？", opts:[
+    {t:"心情上的困擾", type:"A"},
+    {t:"電腦或系統操作問題", type:"B"},
+    {t:"健康或產品選擇問題", type:"C"},
+    {t:"人際溝通或機會判斷", type:"D"},
+    {t:"怎麼發文、怎麼拍照比較好看", type:"E"}
+  ]},
+  {q:"如果今天辦一場活動，你最想負責？", opts:[
+    {t:"接待新朋友、讓大家感覺自在", type:"A"},
+    {t:"現場系統／流程操作支援", type:"B"},
+    {t:"產品體驗桌介紹", type:"C"},
+    {t:"上台分享故事、帶動邀約", type:"D"},
+    {t:"側拍、剪輯、把活動變成精彩內容", type:"E"}
+  ]},
+  {q:"遇到陌生人，你通常會？", opts:[
+    {t:"很快讓對方感到放心、建立信任", type:"A"},
+    {t:"觀察情況後才給建議", type:"B"},
+    {t:"自然地聊起生活與健康話題", type:"C"},
+    {t:"主動聊天、開啟話題", type:"D"},
+    {t:"很自然地想到這段互動可以變成什麼內容", type:"E"}
+  ]},
+  {q:"如果有一天你成為教練，你最想被記住的特質是？", opts:[
+    {t:"很溫暖、很懂陪伴", type:"A"},
+    {t:"很專業、很可靠", type:"B"},
+    {t:"很有經驗、很真誠", type:"C"},
+    {t:"很有感染力、很敢衝", type:"D"},
+    {t:"很有創意、很會表達", type:"E"}
+  ]},
+  {q:"哪件事你做再久都不容易累？", opts:[
+    {t:"聽人說話、陪伴人", type:"A"},
+    {t:"研究工具、優化流程", type:"B"},
+    {t:"分享產品、照顧顧客", type:"C"},
+    {t:"聊夢想、聊機會", type:"D"},
+    {t:"構思內容、拍片剪輯", type:"E"}
+  ]},
+  {q:"下面哪一句最像你的使命？", opts:[
+    {t:"陪伴每個人安心成長", type:"A"},
+    {t:"幫助每個人熟練上手", type:"B"},
+    {t:"幫助每個人變得更好", type:"C"},
+    {t:"幫助每個人勇敢開始", type:"D"},
+    {t:"幫助每個人的努力被世界看見", type:"E"}
+  ]}
+];
+
+const types = {
+  A: {key:"A", name:"關係教練", en:"Relationship Coach", emoji:"❤️", color:"#ff6f91",
+      desc:"你的天賦，是讓人安心。你可能不是團隊裡最會演講的人，也不是最會成交的人，但你很容易讓人願意敞開心房。當新人遇到挫折時，你的陪伴和傾聽，往往比答案更有力量。"},
+  B: {key:"B", name:"工具教練", en:"System Coach", emoji:"🛠️", color:"#4ecdc4",
+      desc:"你的天賦，是把複雜變簡單。你擅長整理流程、解決問題，讓別人更快上手。團隊因為有你，很多事情都變得更有效率。"},
+  C: {key:"C", name:"零售教練", en:"Retail Coach", emoji:"🛍️", color:"#ffb347",
+      desc:"你的天賦，是用真實經驗創造信任。你喜歡分享產品帶來的改變，也願意用心經營顧客關係。你的影響力，來自每一個真誠的見證與服務。"},
+  D: {key:"D", name:"招募教練", en:"Recruiting Coach", emoji:"🎯", color:"#a685e2",
+      desc:"你的天賦，是點燃希望。你擅長建立信任，也善於把機會分享得自然真誠。你不是在說服別人，而是在幫助別人看見更多可能。"},
+  E: {key:"E", name:"自媒體/IP教練", en:"Self-Media Coach", emoji:"📱", color:"#5b9bd5",
+      desc:"你的天賦，是讓價值被更多人看見。你對內容創作、說故事、經營個人品牌充滿興趣，也樂於嘗試新的表達方式。你不只是分享，而是在幫助團隊被更多人認識。"}
+};
+const optKeys = ["A","B","C","D","E"];
+
+let current = 0;
+let scores = {A:0,B:0,C:0,D:0,E:0};
+let userName = "";
+let bonusAnswer = "";
+
+// Fisher-Yates 洗牌：只打亂顯示順序，type 屬性隨物件移動，不影響計分
+function shuffle(array){
+  const arr = array.slice();
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function startQuiz(){
+  userName = document.getElementById("userName").value || "神秘夥伴";
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("quizScreen").style.display="block";
+  renderMiniScores();
+  renderQuestion();
+}
+
+function renderMiniScores(){
+  const wrap = document.getElementById("miniScores");
+  wrap.innerHTML = "";
+  optKeys.forEach(k=>{
+    const t = types[k];
+    const div = document.createElement("div");
+    div.className = "mini-score-item";
+    div.innerHTML = `${t.emoji}<div class="mini-score-bar"><div class="mini-score-fill" id="mini-${k}" style="background:${t.color}"></div></div>`;
+    wrap.appendChild(div);
+  });
+  updateMiniScores();
+}
+
+function updateMiniScores(){
+  const max = Math.max(1, ...Object.values(scores));
+  optKeys.forEach(k=>{
+    const pct = (scores[k]/Math.max(max,1))*100;
+    const el = document.getElementById("mini-"+k);
+    if(el) el.style.width = pct+"%";
+  });
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById("qIndexLabel").textContent = `第 ${current+1} / ${questions.length} 題`;
+  const pct = Math.round(((current)/questions.length)*100);
+  document.getElementById("qPercentLabel").textContent = pct+"%";
+  document.getElementById("progressFill").style.width = pct+"%";
+  document.getElementById("qTitle").textContent = `${current+1}. ${q.q}`;
+
+  // 每次進入此題都重新隨機排列選項顯示順序
+  const shuffledOpts = shuffle(q.opts);
+
+  const wrap = document.getElementById("optionsWrap");
+  wrap.innerHTML = "";
+  shuffledOpts.forEach((opt, idx)=>{
+    const displayKey = optKeys[idx]; // 只是顯示用的字母標籤，跟計分無關
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.innerHTML = `<span class="opt-key">${displayKey}</span><span>${opt.t}</span>`;
+    btn.onclick = ()=> selectOption(opt.type); // 依據 opt.type 計分，不受顯示順序影響
+    wrap.appendChild(btn);
+  });
+  window.scrollTo(0,0);
+}
+
+function selectOption(type){
+  scores[type]++;
+  updateMiniScores();
+  current++;
+  if(current < questions.length){
+    setTimeout(renderQuestion, 130);
+  } else {
+    setTimeout(showBonus, 250);
+  }
+}
+
+function showBonus(){
+  document.getElementById("quizScreen").style.display="none";
+  document.getElementById("bonusScreen").style.display="block";
+  window.scrollTo(0,0);
+  document.querySelectorAll(".bonus-opt").forEach(el=>{
+    el.onclick = ()=>{
+      document.querySelectorAll(".bonus-opt").forEach(o=>o.classList.remove("selected"));
+      el.classList.add("selected");
+      bonusAnswer = el.getAttribute("data-v");
+    };
+  });
+}
+
+function showResult(){
+  document.getElementById("bonusScreen").style.display="none";
+  document.getElementById("resultScreen").style.display="block";
+  window.scrollTo(0,0);
+
+  const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
+  const primary = types[sorted[0]];
+  const secondary = types[sorted[1]];
+
+  document.getElementById("resultEmoji").textContent = primary.emoji;
+  document.getElementById("resultTitle").textContent = `${userName}，你是「${primary.name}」型`;
+  document.getElementById("resultSub").textContent = primary.en;
+  document.getElementById("resultDesc").textContent = primary.desc;
+
+  document.getElementById("secondaryBox").innerHTML =
+    `<b>${secondary.emoji} 你的副修天賦：${secondary.name}</b><br>${secondary.desc}`;
+
+  const chart = document.getElementById("scoreChart");
+  chart.innerHTML = "";
+  const maxScore = Math.max(...Object.values(scores), 1);
+  sorted.forEach(k=>{
+    const t = types[k];
+    const row = document.createElement("div");
+    row.className = "score-row";
+    row.innerHTML = `
+      <div class="score-label">${t.emoji} ${t.name}</div>
+      <div class="score-bar-bg"><div class="score-bar-fill" style="background:${t.color}" id="bar-${k}"></div></div>
+      <div class="score-val">${scores[k]}</div>`;
+    chart.appendChild(row);
+  });
+  setTimeout(()=>{
+    sorted.forEach(k=>{
+      const el = document.getElementById("bar-"+k);
+      if(el) el.style.width = (scores[k]/maxScore*100)+"%";
+    });
+  }, 100);
+
+  launchConfetti();
+}
+
+function launchConfetti(){
+  const colors = ["#ff6f91","#4ecdc4","#ffb347","#a685e2","#5b9bd5","#ffd93d"];
+  const count = window.innerWidth < 640 ? 36 : 60;
+  for(let i=0;i<count;i++){
+    const c = document.createElement("div");
+    c.className="confetti";
+    c.style.left = Math.random()*100+"vw";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.width = (6+Math.random()*6)+"px";
+    c.style.height = c.style.width;
+    c.style.borderRadius = Math.random()>0.5 ? "50%":"2px";
+    c.style.animationDuration = (2+Math.random()*2)+"s";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 4500);
+  }
+}
+
+// ============ 串接 Google Sheets（請貼上你的 Apps Script Web App 網址） ============
+const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbypdgp6Vx76M7ntN0r_jdrYcViMYpwDAcGr64z2QHQKatCAwhX9D4Uvk7WG-IkjKxsZFQ/exec";
+
+function submitResult(){
+  const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
+  const payload = {
+    name: userName,
+    timestamp: new Date().toISOString(),
+    primary: types[sorted[0]].name,
+    secondary: types[sorted[1]].name,
+    scoreA: scores.A, scoreB: scores.B, scoreC: scores.C, scoreD: scores.D, scoreE: scores.E,
+    aiAdvisorInterest: bonusAnswer || "未填答"
+  };
+  const statusEl = document.getElementById("submitStatus");
+
+  if(GOOGLE_SHEET_WEBHOOK_URL.startsWith("PASTE_")){
+    statusEl.textContent = "⚠️ 尚未設定 Google Sheets 網址，結果暫存於此頁面";
+    console.log("QUIZ_RESULT_PAYLOAD", payload);
+    return;
+  }
+
+  statusEl.textContent = "傳送中...";
+  fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  }).then(()=>{
+    statusEl.textContent = "✅ 已成功送出給總教練！";
+  }).catch(()=>{
+    statusEl.textContent = "❌ 送出失敗，請確認網址設定";
+  });
+}
+</script>
+
+</body>
+</html>
