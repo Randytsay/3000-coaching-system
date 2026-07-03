@@ -1,0 +1,17 @@
+{
+  "name": "找到你的教練天賦｜五力陪跑系統",
+  "short_name": "教練天賦",
+  "description": "20 題，3-5 分鐘，測出你是哪一種教練：關係、工具、零售、招募、自媒體。",
+  "lang": "zh-TW",
+  "start_url": "/3000-coaching-system/",
+  "scope": "/3000-coaching-system/",
+  "display": "standalone",
+  "background_color": "#FFF7EC",
+  "theme_color": "#5B2C82",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "maskable-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -3,190 +3,437 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFF7EC">
+<meta name="description" content="20 題測出你是哪種教練：關係 / 工具 / 零售 / 招募 / 自媒體。五力陪跑系統。">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Open Graph (Facebook, LINE, Threads) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="五力陪跑系統">
+<meta property="og:title" content="找到你的教練天賦｜五力陪跑系統">
+<meta property="og:description" content="20 題，3-5 分鐘，測出你是哪一種教練：關係、工具、零售、招募、自媒體。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://Randytsay.github.io/3000-coaching-system/assets/og-image.webp">
+<meta property="og:image:secure_url" content="https://Randytsay.github.io/3000-coaching-system/assets/og-image.webp">
+<meta property="og:image:type" content="image/webp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="找到你的教練天賦 — 五力陪跑系統">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="找到你的教練天賦｜五力陪跑系統">
+<meta name="twitter:description" content="20 題測出你是哪一種教練。3-5 分鐘，五力陪跑系統。">
+<meta name="twitter:image" content="https://Randytsay.github.io/3000-coaching-system/assets/og-image.webp">
+
+<!-- LINE 預覽（用 og:image 即可，但加這條確保） -->
+<meta property="og:image:url" content="https://Randytsay.github.io/3000-coaching-system/assets/og-image.webp">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="assets/manifest.json">
+
 <title>找到你的教練天賦｜五力陪跑系統</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { width:100%; overflow-x:hidden; }
+  :root {
+    /* 五力陪跑系統色彩語彙 */
+    --c-relation: #FF8AAE; /* 關係 A */
+    --c-tool:     #7FD8C5; /* 工具 B */
+    --c-retail:   #FFB37A; /* 零售 C */
+    --c-recruit:  #B89CFF; /* 招募 D */
+    --c-media:    #89B8E5; /* 自媒體 E */
+    --c-primary:  #5B2C82; /* 深紫主色 */
+    --c-accent:   #FF6F91; /* 珊瑚強調 */
+    --c-mint:     #4ECDC4; /* 薄荷完成色 */
+    --c-cream:    #FFF7EC; /* 米奶油底色 */
+    --c-lavender: #F3EEFF; /* 淡紫輔色 */
+    --c-ink:      #4A3B78; /* 內文紫 */
+    --c-ink-soft: #7E7398; /* 內文紫淡 */
+  }
   body {
-    font-family: "Noto Sans TC", "Microsoft JhengHei", -apple-system, sans-serif;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", -apple-system, "Segoe UI Emoji", sans-serif;
+    font-weight: 500;
     min-height:100vh;
-    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb, #fbc2eb, #ffecd2);
-    background-size: 400% 400%;
-    animation: gradientBG 18s ease infinite;
+    /* 改：靜態柔和米→淡紫漸層（不再滾動動畫，眼睛不疲勞） */
+    background: linear-gradient(180deg, var(--c-cream) 0%, var(--c-lavender) 100%);
     display:flex; align-items:center; justify-content:center;
-    padding: max(16px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+    padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
     position:relative;
+    color: var(--c-ink);
   }
-  @keyframes gradientBG {
-    0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;}
+  /* 極慢的呼吸光暈（30s 一輪，視覺不刺眼） */
+  body::before {
+    content:"";
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(40% 30% at 20% 30%, rgba(255,138,174,0.18), transparent 60%),
+      radial-gradient(40% 30% at 80% 70%, rgba(127,216,197,0.16), transparent 60%),
+      radial-gradient(30% 25% at 50% 90%, rgba(184,156,255,0.14), transparent 65%);
+    animation: breath 30s ease-in-out infinite alternate;
+    z-index:0; pointer-events:none;
   }
+  @keyframes breath { from{transform:translate(0,0) scale(1);} to{transform:translate(2%,-1%) scale(1.04);} }
+
   .float-emoji {
-    position:fixed; font-size:clamp(16px,4vw,26px); opacity:0.4; z-index:0;
-    animation: floatUp 14s linear infinite;
-    user-select:none; pointer-events:none;
+    position:fixed; font-size:clamp(14px,3.5vw,22px); opacity:0.35; z-index:0;
+    animation: floatUp linear infinite;
+    user-select:none; pointer-events:none; will-change: transform;
   }
+  /* 改：每個 emoji 不同的水平 base + 不同 duration 製造更自然的星空感 */
   @keyframes floatUp {
-    0% { transform: translateY(110vh) rotate(0deg); opacity:0; }
-    10% { opacity:0.5; }
-    90% { opacity:0.5; }
-    100% { transform: translateY(-10vh) rotate(360deg); opacity:0; }
+    0%   { transform: translate3d(0, 110vh, 0) rotate(0deg);   opacity:0; }
+    8%   { opacity: 0.45; }
+    92%  { opacity: 0.45; }
+    100% { transform: translate3d(20px, -12vh, 0) rotate(360deg); opacity:0; }
   }
+
   .card {
-    background:#fff;
-    border-radius:24px;
-    box-shadow: 0 16px 50px rgba(0,0,0,0.18);
-    max-width:600px; width:100%;
-    padding: clamp(20px,5vw,32px) clamp(16px,5vw,28px) clamp(28px,6vw,40px);
+    background:#ffffff;
+    border-radius: 28px;
+    box-shadow:
+      0 20px 60px rgba(91,44,130,0.10),
+      0 4px 12px rgba(91,44,130,0.06);
+    max-width: 600px; width: 100%;
+    padding: clamp(22px,5vw,34px) clamp(16px,5vw,28px) clamp(30px,6vw,42px);
     position:relative; z-index:2;
-    animation: popIn 0.5s ease;
+    animation: popIn 0.5s cubic-bezier(.22,.9,.3,1);
   }
   @keyframes popIn { from{opacity:0; transform:scale(0.94);} to{opacity:1; transform:scale(1);} }
 
   /* ---------- 開場頁 ---------- */
   #startScreen { text-align:center; }
   #startScreen h1 {
-    font-size:clamp(20px,5.5vw,26px); color:#5b2c82; margin-bottom:8px; line-height:1.3;
+    font-size:clamp(22px,6vw,28px);
+    font-weight:800; color:var(--c-primary);
+    letter-spacing: 0.02em;
+    margin-bottom: 10px; line-height:1.3;
   }
+  #startScreen h1 .accent { color: var(--c-accent); }
   #startScreen .sub {
-    font-size:clamp(13px,3.5vw,15px); color:#888; margin-bottom:18px; line-height:1.7;
+    font-size:clamp(13.5px,3.7vw,15px); color:var(--c-ink-soft);
+    margin-bottom: 22px; line-height:1.85;
   }
-  .badge-row { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin:18px 0; }
+  #startScreen .sub b { color: var(--c-primary); font-weight:700; }
+
+  /* 改：badge 改用 chip 樣式，不再撐滿寬，視覺密度更像預告 */
+  .badge-row {
+    display:flex; justify-content:center; gap:6px;
+    flex-wrap:nowrap; overflow-x:auto;
+    margin: 20px 0 18px; padding: 4px 2px 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .badge-row::-webkit-scrollbar { display:none; }
   .badge {
-    background:linear-gradient(135deg,#f6f9fc,#e9eefc);
-    border-radius:14px; padding:8px 10px; font-size:clamp(10px,2.8vw,12px);
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    display:flex; flex-direction:column; align-items:center; gap:3px;
-    min-width:62px; flex:1 1 62px; max-width:90px;
+    background:#fff;
+    border:1.5px solid rgba(184,156,255,0.18);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size:clamp(11px,2.9vw,12.5px);
+    color: var(--c-ink-soft);
+    box-shadow: 0 2px 6px rgba(91,44,130,0.04);
+    display:inline-flex; align-items:center; gap:5px;
+    white-space:nowrap; flex-shrink:0;
   }
-  .badge .emo { font-size:clamp(18px,4.5vw,22px); }
+  .badge .emo { font-size:clamp(13px,3.5vw,15px); }
+  .badge[data-t="A"] { border-color: rgba(255,138,174,0.4); }
+  .badge[data-t="B"] { border-color: rgba(127,216,197,0.4); }
+  .badge[data-t="C"] { border-color: rgba(255,179,122,0.4); }
+  .badge[data-t="D"] { border-color: rgba(184,156,255,0.4); }
+  .badge[data-t="E"] { border-color: rgba(137,184,229,0.4); }
   .start-btn {
-    margin-top:10px; width:100%; max-width:280px;
-    background:linear-gradient(135deg,#ff8a65,#ff6f91);
-    color:#fff; border:none; padding:16px 24px;
-    border-radius:30px; font-size:clamp(15px,4vw,17px); font-weight:bold;
-    cursor:pointer; box-shadow:0 8px 20px rgba(255,111,145,0.4);
-    transition:transform 0.2s;
-    min-height:48px;
+    margin-top: 14px; width:100%; max-width:300px;
+    /* 改：深紫→珊瑚橙 高飽和 CTA，跟柔和底色形成對比一眼抓住注意力 */
+    background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-accent) 100%);
+    color:#fff; border:none; padding: 17px 28px;
+    border-radius: 999px;
+    font-size:clamp(16px,4.2vw,18px); font-weight:700;
+    cursor:pointer;
+    box-shadow: 0 10px 24px rgba(255,111,145,0.35), 0 4px 10px rgba(91,44,130,0.18);
+    transition: transform 0.15s, box-shadow 0.15s;
+    min-height: 52px;
+    letter-spacing: 0.04em;
   }
+  .start-btn:hover { box-shadow: 0 12px 28px rgba(255,111,145,0.45), 0 6px 14px rgba(91,44,130,0.22); }
   .start-btn:active { transform: scale(0.97); }
   .name-input {
-    padding:12px 16px; border-radius:20px; border:1px solid #ddd;
-    width:100%; max-width:280px; font-size:15px; margin:14px 0;
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(184,156,255,0.3);
+    width:100%; max-width:300px;
+    font-size:15px; margin: 18px 0 4px;
     -webkit-appearance:none;
+    background: #fafaff;
+    color: var(--c-ink);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    outline: none;
   }
+  .name-input::placeholder { color: #b9b1cf; }
+  .name-input:focus {
+    border-color: var(--c-accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255,111,145,0.12);
+  }
+  .name-input.missing {
+    border-color: var(--c-accent);
+    background: #fff5f7;
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  .hint {
+    display:none;
+    color: var(--c-accent); font-size: 12.5px;
+    margin-top: 6px; font-weight: 600;
+  }
+  .hint.show { display:block; }
 
   /* ---------- 進度區 ---------- */
   #quizScreen { display:none; }
-  .progress-wrap { margin-bottom:16px; }
+  .progress-wrap { margin-bottom: 18px; }
   .progress-top {
     display:flex; justify-content:space-between; align-items:center;
-    font-size:clamp(11px,3vw,13px); color:#999; margin-bottom:6px;
+    font-size:clamp(11px,3vw,13px);
+    color: var(--c-ink-soft);
+    margin-bottom:8px;
+    font-weight: 600;
   }
   .progress-bar-bg {
-    width:100%; height:9px; background:#eee; border-radius:10px; overflow:hidden;
+    width:100%; height: 10px; background:#efeaf6; border-radius:999px; overflow:hidden;
   }
   .progress-bar-fill {
-    height:100%; border-radius:10px;
-    background:linear-gradient(90deg,#ff9a9e,#fbc2eb,#a1c4fd);
-    width:0%; transition:width 0.4s ease;
+    height:100%; border-radius:999px;
+    background: linear-gradient(90deg, var(--c-relation), var(--c-recruit), var(--c-media));
+    width:0%; transition:width 0.4s cubic-bezier(.22,.9,.3,1);
   }
-  .mini-scores { display:flex; gap:4px; margin-top:10px; flex-wrap:nowrap; }
-  .mini-score-item { flex:1; text-align:center; font-size:10px; color:#aaa; min-width:0; }
+  .mini-scores { display:flex; gap:6px; margin-top: 12px; }
+  /* 改：手機上 min-width 不足，預設只顯條不顯標籤；>= 480px 才顯 */
+  .mini-score-item {
+    flex:1; text-align:center;
+    font-size: 9px; color: var(--c-ink-soft);
+    min-width: 0;
+  }
+  .mini-score-label { display:none; }
   .mini-score-bar {
-    height:5px; border-radius:6px; background:#f0f0f0; overflow:hidden; margin-top:3px;
+    height: 6px; border-radius:999px; background:#efeaf6; overflow:hidden; margin-top:3px;
   }
-  .mini-score-fill { height:100%; border-radius:6px; width:0%; transition:width 0.3s; }
+  .mini-score-fill {
+    height:100%; border-radius:999px; width:0%; transition:width 0.4s;
+  }
 
   .q-title {
-    font-size:clamp(15px,4.3vw,18px); font-weight:bold; color:#4a3b78;
-    margin:18px 0 14px; line-height:1.6; min-height:auto;
+    font-size:clamp(16px,4.5vw,19px);
+    font-weight: 700;
+    color: var(--c-primary);
+    margin: 22px 0 16px; line-height: 1.65;
   }
-  .options { display:flex; flex-direction:column; gap:10px; }
+  .options { display:flex; flex-direction:column; gap: 10px; }
   .opt-btn {
     text-align:left; width:100%;
-    background:#f7f8fc;
-    border:2px solid transparent;
-    border-radius:16px;
-    padding:14px 14px;
-    font-size:clamp(13px,3.6vw,15px);
+    background: #fafaff;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    padding: 15px 16px;
+    font-size:clamp(13.5px,3.7vw,15px); font-weight: 500;
     cursor:pointer;
     transition: all 0.15s;
-    display:flex; align-items:center; gap:10px;
-    min-height:48px;
-    line-height:1.4;
+    display:flex; align-items:center; gap:12px;
+    min-height: 52px;
+    line-height: 1.5;
+    color: var(--c-ink);
   }
-  .opt-btn:active {
-    border-color:#ffb6c1;
-    background:#fff0f3;
-    transform: scale(0.98);
+  .opt-btn:hover { background: #f3eeff; }
+  /* 改：加 .selected 持久樣式，選了要亮起來 */
+  .opt-btn:active,
+  .opt-btn.selected {
+    border-color: var(--c-accent);
+    background: #fff0f3;
+    transform: scale(0.99);
   }
   .opt-key {
-    background:#e0e6ff; color:#5b2c82; font-weight:bold;
-    width:26px; height:26px; border-radius:50%;
+    background: linear-gradient(135deg, #e9e1ff, #d6e8ff); color: var(--c-primary);
+    font-weight: 700;
+    width: 28px; height: 28px; border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
-    font-size:12px; flex-shrink:0;
+    font-size: 12px; flex-shrink:0;
+    letter-spacing: 0;
+  }
+  .opt-btn.selected .opt-key {
+    background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
+    color: #fff;
   }
 
   /* ---------- 結果頁 ---------- */
   #resultScreen { display:none; text-align:center; }
-  .result-emoji { font-size:clamp(48px,14vw,64px); margin-bottom:6px; animation: bounce 1s infinite; }
-  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
-  #resultTitle { font-size:clamp(18px,5vw,23px); font-weight:bold; color:#5b2c82; margin-bottom:5px; line-height:1.4; }
-  #resultSub { font-size:clamp(13px,3.5vw,15px); color:#ff6f91; font-weight:bold; margin-bottom:14px; }
-  #resultDesc {
-    background:#fff8f0; border-radius:16px; padding:14px 16px;
-    font-size:clamp(12.5px,3.4vw,14px); color:#666; line-height:1.8; text-align:left; margin-bottom:18px;
+  /* 改：emoji 主視覺區，加柔和圓暈讓 hero 立體 */
+  .result-emoji {
+    font-size: clamp(56px,16vw,76px);
+    margin-bottom: 6px;
+    animation: bounce 1.6s ease-in-out infinite;
+    display:inline-block;
+    filter: drop-shadow(0 6px 12px rgba(91,44,130,0.12));
   }
-  .score-chart { display:flex; flex-direction:column; gap:9px; margin-bottom:18px; }
-  .score-row { display:flex; align-items:center; gap:8px; }
-  .score-label { width:clamp(78px,22vw,110px); font-size:clamp(11px,3vw,13px); text-align:left; color:#555; flex-shrink:0; }
-  .score-bar-bg { flex:1; height:13px; background:#f0f0f0; border-radius:10px; overflow:hidden; }
-  .score-bar-fill { height:100%; border-radius:10px; width:0%; transition:width 1s ease; }
-  .score-val { width:24px; font-size:12px; color:#999; text-align:right; flex-shrink:0; }
-  .secondary-box {
-    background:#eef7ff; border-radius:16px; padding:14px; margin-bottom:18px;
-    font-size:clamp(12.5px,3.4vw,14px); color:#4a5a78; text-align:left; line-height:1.7;
+  @keyframes bounce {
+    0%,100% { transform: translateY(0)   rotate(0deg); }
+    50%     { transform: translateY(-10px) rotate(-2deg); }
+  }
+  #resultTitle {
+    font-size:clamp(19px,5.2vw,25px); font-weight:800;
+    color: var(--c-primary);
+    margin-bottom: 6px; line-height: 1.4;
+    letter-spacing: 0.01em;
+  }
+  #resultSub {
+    font-size:clamp(13px,3.5vw,15px); color: var(--c-accent);
+    font-weight: 700;
+    margin-bottom: 18px;
+    letter-spacing: 0.05em;
+  }
+  #resultDesc {
+    background: var(--c-cream);
+    border-radius: 18px; padding: 16px 18px;
+    font-size:clamp(13px,3.5vw,14.5px);
+    color: var(--c-ink);
+    line-height: 1.85;
+    text-align:left;
+    margin-bottom: 18px;
   }
 
-  /* ---------- 彩蛋題（AI賦能顧問意願） ---------- */
+  /* 改：結果頁新增五色帶 hero strip（從主色淡到白） */
+  .color-band {
+    display:flex; height: 6px; border-radius: 999px; overflow:hidden;
+    margin: 0 auto 22px; width: 88%;
+    box-shadow: 0 2px 6px rgba(91,44,130,0.08);
+  }
+  .color-band span { flex:1; }
+  .color-band .b-A { background: var(--c-relation); }
+  .color-band .b-B { background: var(--c-tool); }
+  .color-band .b-C { background: var(--c-retail); }
+  .color-band .b-D { background: var(--c-recruit); }
+  .color-band .b-E { background: var(--c-media); }
+
+  .score-chart { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .score-row { display:flex; align-items:center; gap:10px; }
+  .score-label {
+    width: clamp(78px,22vw,108px);
+    font-size:clamp(11.5px,3.1vw,13px);
+    text-align:left; color: var(--c-ink);
+    flex-shrink:0; font-weight: 600;
+  }
+  .score-bar-bg {
+    flex:1; height: 14px;
+    background: #efeaf6; border-radius:999px; overflow:hidden;
+  }
+  .score-bar-fill {
+    height:100%; border-radius:999px;
+    width:0%; transition:width 1.1s cubic-bezier(.22,.9,.3,1);
+  }
+  .score-val {
+    width: 26px; font-size:12px; color:var(--c-ink-soft);
+    text-align:right; flex-shrink:0; font-weight: 700;
+  }
+  .secondary-box {
+    background: linear-gradient(135deg, #eef7ff, #f5eaff);
+    border-radius: 18px; padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size:clamp(12.5px,3.4vw,14px);
+    color: var(--c-ink);
+    text-align:left; line-height:1.8;
+  }
+  .secondary-box b { color: var(--c-primary); }
+
+  /* ---------- 彩蛋題 ---------- */
   .bonus-box {
-    background:linear-gradient(135deg,#eef4ff,#f5eaff);
-    border-radius:16px; padding:16px; margin-bottom:18px; text-align:left;
+    background: linear-gradient(135deg, #eef4ff, #f5eaff);
+    border-radius: 18px; padding: 18px;
+    margin-bottom: 20px; text-align:left;
   }
   .bonus-box .bt {
-    font-size:clamp(13.5px,3.7vw,15px); font-weight:bold; color:#5b2c82; margin-bottom:6px;
+    font-size:clamp(14px,3.9vw,15.5px);
+    font-weight:700; color: var(--c-primary);
+    margin-bottom: 8px;
   }
   .bonus-box .bd {
-    font-size:clamp(12px,3.2vw,13px); color:#777; margin-bottom:12px; line-height:1.6;
+    font-size:clamp(12.5px,3.4vw,13.5px); color: var(--c-ink-soft);
+    margin-bottom: 14px; line-height:1.7;
   }
-  .bonus-opts { display:flex; flex-direction:column; gap:8px; }
+  .bonus-opts { display:flex; flex-direction:column; gap:10px; }
   .bonus-opt {
-    background:#fff; border:2px solid #e6e0f5; border-radius:12px;
-    padding:11px 12px; font-size:clamp(12.5px,3.4vw,14px); cursor:pointer;
-    text-align:left; display:flex; align-items:center; gap:8px; min-height:44px;
-    transition:all 0.15s;
+    background:#fff; border: 2px solid #e6e0f5;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size:clamp(12.5px,3.4vw,14px);
+    cursor:pointer; text-align:left;
+    display:flex; align-items:center; gap:10px;
+    min-height: 48px;
+    transition: all 0.15s;
+    color: var(--c-ink);
   }
-  .bonus-opt.selected { border-color:#a685e2; background:#f5f0ff; font-weight:bold; }
+  .bonus-opt.selected {
+    border-color: var(--c-recruit);
+    background: #f5f0ff;
+    font-weight: 600;
+  }
+  .bonus-opt:hover { border-color: rgba(184,156,255,0.5); }
 
-  .action-btns { display:flex; flex-direction:column; gap:10px; align-items:center; }
+  .action-btns { display:flex; flex-direction:column; gap: 10px; align-items:center; }
   .action-btns button {
-    border:none; padding:14px 20px; border-radius:24px;
-    font-size:clamp(14px,3.8vw,15px); font-weight:bold; cursor:pointer;
-    width:100%; max-width:320px; min-height:48px;
+    border:none; padding: 14px 22px; border-radius: 999px;
+    font-size:clamp(14px,3.8vw,15.5px); font-weight:700;
+    cursor:pointer;
+    width:100%; max-width:320px; min-height: 50px;
+    letter-spacing: 0.02em;
   }
-  #submitBtn { background:linear-gradient(135deg,#67d8b0,#4ecdc4); color:#fff; }
-  #retryBtn { background:#eee; color:#666; }
-  #submitStatus { margin-top:12px; font-size:12.5px; color:#4ecdc4; min-height:18px; }
+  #submitBtn {
+    background: linear-gradient(135deg, #56d8a5, var(--c-mint));
+    color:#fff;
+    box-shadow: 0 8px 20px rgba(78,205,196,0.32);
+  }
+  #submitBtn:hover { box-shadow: 0 10px 24px rgba(78,205,196,0.42); }
+  #submitBtn:active { transform: scale(0.98); }
+  #retryBtn {
+    background: #efeaf6; color: var(--c-ink);
+  }
+  #retryBtn:hover { background: #e3daef; }
+  #submitStatus {
+    margin-top: 14px; font-size:13px; color: var(--c-mint);
+    min-height: 20px; font-weight: 600;
+  }
 
+  /* 改：confetti 升級為 emoji 慶祝元素 */
   .confetti {
-    position:fixed; top:-10px; width:8px; height:8px; z-index:999;
-    animation: fall linear forwards;
+    position:fixed;
+    top:-20px;
+    z-index:999;
+    pointer-events:none;
+    animation: fall cubic-bezier(.5,0,.7,1) forwards;
+    will-change: transform;
   }
-  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity:0.2; } }
+  @keyframes fall {
+    0%   { transform: translate3d(0,0,0) rotateZ(0);  opacity:1; }
+    85%  { opacity: 1; }
+    100% { transform: translate3d(var(--drift,20px), 110vh, 0) rotateZ(720deg); opacity:0.2; }
+  }
 
   @media (max-width: 380px){
-    .badge { min-width:52px; padding:6px 6px; }
-    .card { padding:16px 12px 24px; }
+    .card { padding: 18px 12px 26px; }
+    .q-title { margin-top: 14px; }
+  }
+  /* 改：>= 480px 才顯 mini-score 標籤，桌面也顯 emoji */
+  @media (min-width: 480px){
+    .mini-score-label { display: block; margin-bottom: 1px; }
+    .mini-score-item { font-size: 10px; }
   }
   @media (min-width: 640px){
     .float-emoji { display:block; }
@@ -196,15 +443,19 @@
 <body>
 
 <script>
+  /* 改：用格點 + 不同 base 讓 emoji 分散不疊 */
   const emojis = ["❤️","🎯","🛍️","🛠️","📱","✨","🌟","🤖"];
-  const emojiCount = window.innerWidth < 640 ? 8 : 16;
+  const emojiCount = window.innerWidth < 640 ? 10 : 18;
+  /* 在 -10vh~110vh 之間均匀分佈起始點，避免全部從下方同時冒出 */
   for (let i=0;i<emojiCount;i++){
     const el = document.createElement("div");
     el.className="float-emoji";
-    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-    el.style.left = Math.random()*100+"vw";
-    el.style.animationDuration = (11+Math.random()*10)+"s";
-    el.style.animationDelay = (Math.random()*10)+"s";
+    el.textContent = emojis[i % emojis.length];
+    el.style.left = ((i + 0.5) / emojiCount * 100 + (Math.random()*4-2)) + "vw";
+    /* 起始高度分散，避免擠在底部同一排 */
+    el.style.top = (Math.random() * 120 - 10) + "vh";
+    el.style.animationDuration = (12 + Math.random() * 10) + "s";
+    el.style.animationDelay = (-Math.random() * 14) + "s"; /* 負延遲一開始就已不同步 */
     document.body.appendChild(el);
   }
 </script>
@@ -213,22 +464,23 @@
 
   <!-- 開場頁 -->
   <div id="startScreen">
-    <div style="font-size:clamp(38px,10vw,46px);">🧭✨</div>
-    <h1>找到你的教練天賦</h1>
+    <div style="font-size:clamp(38px,10vw,46px); margin-bottom: 6px;">🧭✨</div>
+    <h1>找到你的<span class="accent">教練天賦</span></h1>
     <div class="sub">
       這不是人格測驗，也沒有對錯。<br>
       只是想問你一件事：<br>
       <b>「當你想幫助別人成長時，你最自然會做什麼？」</b>
     </div>
     <div class="badge-row">
-      <div class="badge"><span class="emo">❤️</span>關係教練</div>
-      <div class="badge"><span class="emo">🎯</span>招募教練</div>
-      <div class="badge"><span class="emo">🛍️</span>零售教練</div>
-      <div class="badge"><span class="emo">🛠️</span>工具教練</div>
-      <div class="badge"><span class="emo">📱</span>自媒體/IP</div>
+      <div class="badge" data-t="A"><span class="emo">❤️</span>關係教練</div>
+      <div class="badge" data-t="D"><span class="emo">🎯</span>招募教練</div>
+      <div class="badge" data-t="C"><span class="emo">🛍️</span>零售教練</div>
+      <div class="badge" data-t="B"><span class="emo">🛠️</span>工具教練</div>
+      <div class="badge" data-t="E"><span class="emo">📱</span>自媒體/IP</div>
     </div>
-    <div style="font-size:12.5px; color:#aaa; margin:8px 0 6px;">共 20 題＋1 個小彩蛋，約需 3-5 分鐘</div>
-    <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（選填）">
+    <div style="font-size:12.5px; color:var(--c-ink-soft); margin:8px 0 4px;">共 20 題＋1 個小彩蛋，約需 3-5 分鐘</div>
+    <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（選填）" autocomplete="name">
+    <div id="nameHint" class="hint">⚠️ 為了把結果送給總教練，還缺一個名字喔～</div>
     <br>
     <button class="start-btn" onclick="startQuiz()">🚀 開始探索</button>
   </div>
@@ -270,6 +522,9 @@
     <div class="result-emoji" id="resultEmoji">❤️</div>
     <div id="resultTitle">你是關係教練型</div>
     <div id="resultSub">Relationship Coach</div>
+    <div class="color-band" aria-hidden="true">
+      <span class="b-A"></span><span class="b-B"></span><span class="b-C"></span><span class="b-D"></span><span class="b-E"></span>
+    </div>
     <div id="resultDesc"></div>
     <div class="score-chart" id="scoreChart"></div>
     <div class="secondary-box" id="secondaryBox"></div>
@@ -459,14 +714,6 @@ function shuffle(array){
   return arr;
 }
 
-function startQuiz(){
-  userName = document.getElementById("userName").value || "神秘夥伴";
-  document.getElementById("startScreen").style.display="none";
-  document.getElementById("quizScreen").style.display="block";
-  renderMiniScores();
-  renderQuestion();
-}
-
 function renderMiniScores(){
   const wrap = document.getElementById("miniScores");
   wrap.innerHTML = "";
@@ -474,7 +721,8 @@ function renderMiniScores(){
     const t = types[k];
     const div = document.createElement("div");
     div.className = "mini-score-item";
-    div.innerHTML = `${t.emoji}<div class="mini-score-bar"><div class="mini-score-fill" id="mini-${k}" style="background:${t.color}"></div></div>`;
+    /* 含 emoji + 標籤，但標籤在 < 480px 被 CSS 隱藏 */
+    div.innerHTML = `<div class="mini-score-label">${t.emoji}</div><div class="mini-score-bar"><div class="mini-score-fill" id="mini-${k}" style="background:${t.color}"></div></div>`;
     wrap.appendChild(div);
   });
   updateMiniScores();
@@ -489,15 +737,44 @@ function updateMiniScores(){
   });
 }
 
+function startQuiz(){
+  /* 送出前檢查：未填名字時提示、搖晃、捲回頂部 */
+  const nameEl = document.getElementById("userName");
+  const hintEl = document.getElementById("nameHint");
+  const raw = nameEl.value.trim();
+  if (!raw) {
+    nameEl.classList.add("missing");
+    hintEl.classList.add("show");
+    /* 移除動畫以便再次觸發 */
+    setTimeout(() => nameEl.classList.remove("missing"), 500);
+    nameEl.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    /* 監聽一次輸入後自動清除提示 */
+    nameEl.addEventListener("input", function clearHint() {
+      if (nameEl.value.trim()) {
+        hintEl.classList.remove("show");
+        nameEl.removeEventListener("input", clearHint);
+      }
+    }, { once: true });
+    return;
+  }
+  userName = raw;
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("quizScreen").style.display="block";
+  renderMiniScores();
+  renderQuestion();
+}
+
 function renderQuestion(){
   const q = questions[current];
   document.getElementById("qIndexLabel").textContent = `第 ${current+1} / ${questions.length} 題`;
-  const pct = Math.round(((current)/questions.length)*100);
+  /* 改：已答題數 / 總題數（最後一題顯示 100% 而非 95%） */
+  const pct = Math.round(((current+1)/questions.length)*100);
   document.getElementById("qPercentLabel").textContent = pct+"%";
   document.getElementById("progressFill").style.width = pct+"%";
   document.getElementById("qTitle").textContent = `${current+1}. ${q.q}`;
 
-  // 每次進入此題都重新隨機排列選項顯示順序
+  /* 每次進入此題都重新隨機排列選項顯示順序 */
   const shuffledOpts = shuffle(q.opts);
 
   const wrap = document.getElementById("optionsWrap");
@@ -510,7 +787,7 @@ function renderQuestion(){
     btn.onclick = ()=> selectOption(opt.type); // 依據 opt.type 計分，不受顯示順序影響
     wrap.appendChild(btn);
   });
-  window.scrollTo(0,0);
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 function selectOption(type){
@@ -518,9 +795,9 @@ function selectOption(type){
   updateMiniScores();
   current++;
   if(current < questions.length){
-    setTimeout(renderQuestion, 130);
+    setTimeout(renderQuestion, 200);
   } else {
-    setTimeout(showBonus, 250);
+    setTimeout(showBonus, 300);
   }
 }
 
@@ -540,7 +817,7 @@ function showBonus(){
 function showResult(){
   document.getElementById("bonusScreen").style.display="none";
   document.getElementById("resultScreen").style.display="block";
-  window.scrollTo(0,0);
+  window.scrollTo({top:0, behavior:"smooth"});
 
   const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
   const primary = types[sorted[0]];
@@ -578,19 +855,37 @@ function showResult(){
 }
 
 function launchConfetti(){
-  const colors = ["#ff6f91","#4ecdc4","#ffb347","#a685e2","#5b9bd5","#ffd93d"];
-  const count = window.innerWidth < 640 ? 36 : 60;
+  /* 升級：五力 emoji + 圓點 + 細短帶，撒出真正「值得慶祝」的感覺 */
+  const stickers = ["❤️","🎯","🛍️","🛠️","📱","✨","🌟","⭐","🎉","🎊"];
+  const colors   = ["#FF8AAE","#7FD8C5","#FFB37A","#B89CFF","#89B8E5","#FFD93D"];
+  const count = window.innerWidth < 640 ? 40 : 64;
   for(let i=0;i<count;i++){
+    const isSticker = Math.random() < 0.55;
     const c = document.createElement("div");
     c.className="confetti";
     c.style.left = Math.random()*100+"vw";
-    c.style.background = colors[Math.floor(Math.random()*colors.length)];
-    c.style.width = (6+Math.random()*6)+"px";
-    c.style.height = c.style.width;
-    c.style.borderRadius = Math.random()>0.5 ? "50%":"2px";
-    c.style.animationDuration = (2+Math.random()*2)+"s";
+    /* 隨機水平偏移，讓落點不會筆直 */
+    const drift = (Math.random()-0.5) * 80;
+    c.style.setProperty("--drift", drift+"px");
+    c.style.animationDuration = (2.4+Math.random()*2.2)+"s";
+    c.style.animationDelay = (Math.random()*0.5)+"s";
+    if (isSticker) {
+      /* emoji sticker */
+      const ch = stickers[Math.floor(Math.random()*stickers.length)];
+      c.textContent = ch;
+      c.style.fontSize = (16 + Math.random()*14) + "px";
+      c.style.lineHeight = "1";
+      c.style.background = "transparent";
+    } else {
+      /* 色塊 */
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      const w = 6 + Math.random()*7;
+      c.style.width = w + "px";
+      c.style.height = (Math.random()>0.5 ? w : (w*0.4)) + "px";
+      c.style.borderRadius = (Math.random()>0.5 ? "50%" : "2px");
+    }
     document.body.appendChild(c);
-    setTimeout(()=>c.remove(), 4500);
+    setTimeout(()=>c.remove(), 5500);
   }
 }
 
@@ -599,6 +894,20 @@ const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbypdgp
 
 function submitResult(){
   const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
+  /* 雙保險：若使用者繞過 startQuiz 的檢查直接到送出頁，按下送出時再次要求名字 */
+  if (!userName || !userName.trim()) {
+    const statusEl = document.getElementById("submitStatus");
+    statusEl.style.color = "var(--c-accent)";
+    statusEl.textContent = "⚠️ 請先回上一頁填寫名字，再送出結果";
+    /* 嘗試轉回 start screen 重新開始（保留分數不變動） */
+    setTimeout(() => {
+      document.getElementById("resultScreen").style.display = "none";
+      document.getElementById("startScreen").style.display = "block";
+      document.getElementById("userName").focus();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 1200);
+    return;
+  }
   const payload = {
     name: userName,
     timestamp: new Date().toISOString(),
@@ -608,6 +917,7 @@ function submitResult(){
     aiAdvisorInterest: bonusAnswer || "未填答"
   };
   const statusEl = document.getElementById("submitStatus");
+  statusEl.style.color = "var(--c-mint)";
 
   if(GOOGLE_SHEET_WEBHOOK_URL.startsWith("PASTE_")){
     statusEl.textContent = "⚠️ 尚未設定 Google Sheets 網址，結果暫存於此頁面";
