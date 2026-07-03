@@ -192,12 +192,17 @@
     60% { transform: translateX(-4px); }
     80% { transform: translateX(4px); }
   }
-  .hint {
-    display:none;
-    color: var(--c-accent); font-size: 12.5px;
-    margin-top: 6px; font-weight: 600;
+  /* 結果頁 inline 名字表單：輸入框全寬，CTA 在下方 */
+  .inline-name-form {
+    display:flex; flex-direction:column; align-items:center; gap: 4px;
+    padding: 14px;
+    background: #fff5f7;
+    border-radius: 16px;
+    margin: 8px 0;
   }
-  .hint.show { display:block; }
+  .inline-name-form .name-input {
+    margin: 4px 0 8px;
+  }
 
   /* ---------- 進度區 ---------- */
   #quizScreen { display:none; }
@@ -479,8 +484,7 @@
       <div class="badge" data-t="E"><span class="emo">📱</span>自媒體/IP</div>
     </div>
     <div style="font-size:12.5px; color:var(--c-ink-soft); margin:8px 0 4px;">共 20 題＋1 個小彩蛋，約需 3-5 分鐘</div>
-    <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（選填）" autocomplete="name">
-    <div id="nameHint" class="hint">⚠️ 為了把結果送給總教練，還缺一個名字喔～</div>
+    <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（送出結果前填寫即可）" autocomplete="name">
     <br>
     <button class="start-btn" onclick="startQuiz()">🚀 開始探索</button>
   </div>
@@ -738,27 +742,7 @@ function updateMiniScores(){
 }
 
 function startQuiz(){
-  /* 送出前檢查：未填名字時提示、搖晃、捲回頂部 */
-  const nameEl = document.getElementById("userName");
-  const hintEl = document.getElementById("nameHint");
-  const raw = nameEl.value.trim();
-  if (!raw) {
-    nameEl.classList.add("missing");
-    hintEl.classList.add("show");
-    /* 移除動畫以便再次觸發 */
-    setTimeout(() => nameEl.classList.remove("missing"), 500);
-    nameEl.focus();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    /* 監聽一次輸入後自動清除提示 */
-    nameEl.addEventListener("input", function clearHint() {
-      if (nameEl.value.trim()) {
-        hintEl.classList.remove("show");
-        nameEl.removeEventListener("input", clearHint);
-      }
-    }, { once: true });
-    return;
-  }
-  userName = raw;
+  userName = document.getElementById("userName").value || "";
   document.getElementById("startScreen").style.display="none";
   document.getElementById("quizScreen").style.display="block";
   renderMiniScores();
@@ -894,18 +878,38 @@ const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbypdgp
 
 function submitResult(){
   const sorted = optKeys.slice().sort((a,b)=>scores[b]-scores[a]);
-  /* 雙保險：若使用者繞過 startQuiz 的檢查直接到送出頁，按下送出時再次要求名字 */
+  /* 送出前檢查：未填名字時在結果頁直接提示，不跳回首頁中斷流程 */
   if (!userName || !userName.trim()) {
     const statusEl = document.getElementById("submitStatus");
     statusEl.style.color = "var(--c-accent)";
-    statusEl.textContent = "⚠️ 請先回上一頁填寫名字，再送出結果";
-    /* 嘗試轉回 start screen 重新開始（保留分數不變動） */
-    setTimeout(() => {
-      document.getElementById("resultScreen").style.display = "none";
-      document.getElementById("startScreen").style.display = "block";
-      document.getElementById("userName").focus();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 1200);
+    /* 把 name-input 借回結果頁：用 .missing 樣式 + 顯示提示 */
+    statusEl.innerHTML = `
+      <div class="inline-name-form" style="margin: 8px 0 4px;">
+        <div style="font-weight:700; margin-bottom:8px;">⚠️ 送出前需要你的名字</div>
+        <input id="inlineName" class="name-input missing" type="text" placeholder="請輸入你的名字" autocomplete="name" style="margin: 0 0 10px;">
+        <button id="confirmNameBtn" style="background: linear-gradient(135deg, var(--c-primary), var(--c-accent)); color:#fff; border:none; padding: 12px 22px; border-radius: 999px; font-weight:700; font-size: 14px; cursor:pointer; min-height: 44px;">確認名字並送出</button>
+      </div>`;
+    /* 重新綁事件 */
+    const inlineInput = document.getElementById("inlineName");
+    const confirmBtn = document.getElementById("confirmNameBtn");
+    inlineInput.focus();
+    inlineInput.addEventListener("input", () => {
+      if (inlineInput.value.trim()) inlineInput.classList.remove("missing");
+    });
+    confirmBtn.onclick = () => {
+      const v = inlineInput.value.trim();
+      if (!v) {
+        inlineInput.classList.add("missing");
+        /* 重新觸發動畫 */
+        setTimeout(() => inlineInput.classList.remove("missing"), 500);
+        inlineInput.focus();
+        return;
+      }
+      userName = v;
+      /* 接到原本送出流程：清掉表單 + 重設 status 顏色 + 遞迴呼叫自己 */
+      statusEl.innerHTML = "";
+      submitResult();
+    };
     return;
   }
   const payload = {
