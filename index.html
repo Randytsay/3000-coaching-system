@@ -268,12 +268,29 @@
     transform: scale(0.99);
   }
   .opt-key {
-    background: linear-gradient(135deg, #e9e1ff, #d6e8ff); color: var(--c-primary);
-    font-weight: 700;
-    width: 28px; height: 28px; border-radius: 50%;
+    background: #f0edf6; color: var(--c-ink-soft);
+    font-weight: 600;
+    width: 26px; height: 26px; border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
-    font-size: 12px; flex-shrink:0;
+    font-size: 11px; flex-shrink:0;
     letter-spacing: 0;
+  }
+  .opt-copy {
+    display:flex; flex-wrap:wrap; align-items:baseline;
+    column-gap: 0.35em; row-gap: 1px;
+  }
+  .opt-lead {
+    color: var(--c-primary);
+    font-weight: 750;
+  }
+  .opt-detail {
+    color: var(--c-ink-soft);
+    font-weight: 500;
+  }
+  .opt-detail::before {
+    content:"｜";
+    color:#c5bdd4;
+    margin-right:0.35em;
   }
   .opt-btn.selected .opt-key {
     background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
@@ -550,9 +567,9 @@ const questions = [
   {q:"當朋友遇到困難時，你最自然的反應是？", opts:[
     {t:"先陪他聊聊，了解他的心情", type:"A"},
     {t:"幫他拆解問題，教他用合適的工具逐步處理", type:"B"},
-    {t:"分享自己用過且有效的產品經驗，讓他參考", type:"C"},
-    {t:"鼓勵他勇敢踏出第一步", type:"D"},
-    {t:"幫他想想怎麼把這件事說得更有感染力", type:"E"}
+    {t:"分享產品經驗，提供親身有效的參考", type:"C"},
+    {t:"鼓勵他行動，勇敢踏出第一步", type:"D"},
+    {t:"幫他整理說法，讓事情更有感染力", type:"E"}
   ]},
   {q:"新朋友第一次接觸美安，你最喜歡負責哪個環節？", opts:[
     {t:"陪他聊天，了解他的需求", type:"A"},
@@ -821,7 +838,28 @@ function renderQuestion(){
     const displayKey = optKeys[idx]; // 只是顯示用的字母標籤，跟計分無關
     const btn = document.createElement("button");
     btn.className = "opt-btn";
-    btn.innerHTML = `<span class="opt-key">${displayKey}</span><span>${opt.t}</span>`;
+    btn.setAttribute("aria-label", opt.t);
+
+    const key = document.createElement("span");
+    key.className = "opt-key";
+    key.setAttribute("aria-hidden", "true");
+    key.textContent = displayKey;
+
+    const copy = document.createElement("span");
+    copy.className = "opt-copy";
+    const parts = opt.t.match(/^(.+?)[，、／](.+)$/);
+    const lead = document.createElement("strong");
+    lead.className = "opt-lead";
+    lead.textContent = parts ? parts[1] : opt.t;
+    copy.appendChild(lead);
+    if(parts){
+      const detail = document.createElement("span");
+      detail.className = "opt-detail";
+      detail.textContent = parts[2];
+      copy.appendChild(detail);
+    }
+
+    btn.append(key, copy);
     btn.onclick = ()=> selectOption(opt.type); // 依據 opt.type 計分，不受顯示順序影響
     wrap.appendChild(btn);
   });
