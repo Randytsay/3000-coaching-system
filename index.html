@@ -407,11 +407,11 @@
   }
   .radar-heading {
     color:var(--c-primary);
-    font-size:15px;
+    font-size:16px;
     font-weight:800;
     margin:2px 0 4px;
   }
-  .radar-note { color:var(--c-ink-soft); font-size:11px; line-height:1.5; }
+  .radar-note { color:var(--c-ink-soft); font-size:12.5px; line-height:1.55; padding:0 10px; }
   #radarChart { display:block; margin:0 auto; max-width:430px; width:100%; }
   .development-box {
     background:linear-gradient(135deg,#f0fbf8,#f8f3ff);
@@ -1158,10 +1158,19 @@ function renderRadarChart(){
   dataPoints.forEach(([x,y],i)=>{
     svg.appendChild(createSvgElement("circle", {cx:x,cy:y,r:5,fill:types[optKeys[i]].color,stroke:"#fff","stroke-width":"2"}));
   });
+  const labelPositions = [
+    {x:215,y:28,anchor:"middle"},
+    {x:315,y:132,anchor:"start"},
+    {x:305,y:352,anchor:"start"},
+    {x:120,y:352,anchor:"end"},
+    {x:120,y:132,anchor:"end"}
+  ];
   optKeys.forEach((key,i)=>{
-    const [x,y] = radarPoint(i,1.32);
-    const anchor = x < 190 ? "end" : x > 240 ? "start" : "middle";
-    const label = createSvgElement("text", {x,y,"text-anchor":anchor,fill:"#4A3B78","font-size":"13","font-weight":"700"}, `${types[key].name.replace("教練","")} ${scores[key]}`);
+    const {x,y,anchor} = labelPositions[i];
+    const label = createSvgElement("text", {
+      x,y,"text-anchor":anchor,fill:"#4A3B78","font-size":"20","font-weight":"750",
+      stroke:"#fff","stroke-width":"4","paint-order":"stroke","stroke-linejoin":"round"
+    }, `${types[key].name.replace("教練","")} ${scores[key]}`);
     svg.appendChild(label);
   });
 }
