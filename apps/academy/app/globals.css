@@ -1,0 +1,332 @@
+:root {
+  --bg: #fbf6f0;
+  --surface: #fffdf9;
+  --surface-soft: #f5ede0;
+  --ink: #1f2b29;
+  --muted: #5c6866;
+  --line: rgba(31, 43, 41, 0.1);
+  --gold: #8d6845;
+  --moss: #536458;
+  --clay: #a66a4a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top right, rgba(166, 106, 74, 0.18), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(83, 100, 88, 0.16), transparent 28%),
+    linear-gradient(180deg, #fcf7f1 0%, #f2ebe1 100%);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.academy-shell {
+  width: min(1180px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 48px 0 80px;
+}
+
+.academy-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: end;
+}
+
+.eyebrow,
+.panel-head p,
+.hero-note span,
+.journey-card span {
+  margin: 0;
+  color: var(--gold);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.academy-hero h1 {
+  margin: 10px 0 0;
+  font-family: var(--font-display), serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.lede {
+  width: min(760px, 100%);
+  margin: 22px 0 0;
+  color: var(--muted);
+  line-height: 1.95;
+  font-size: 1.04rem;
+}
+
+.hero-note,
+.panel {
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 249, 0.82);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 50px rgba(73, 57, 42, 0.08);
+}
+
+.hero-note {
+  padding: 24px;
+  border-radius: 26px;
+}
+
+.hero-note strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.hero-note p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.academy-grid {
+  display: grid;
+  gap: 22px;
+  margin-top: 28px;
+}
+
+.highlight-row {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.highlight-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 253, 249, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.highlight-card p {
+  margin: 0;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.highlight-mark {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  margin-top: 8px;
+  flex: none;
+  background: linear-gradient(135deg, var(--clay), var(--gold));
+  box-shadow: 0 0 0 7px rgba(166, 106, 74, 0.08);
+}
+
+.panel {
+  padding: 28px;
+  border-radius: 32px;
+}
+
+.panel-head h2 {
+  margin: 12px 0 0;
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 400;
+}
+
+.power-list,
+.journey-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.power-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.journey-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.power-card,
+.journey-card {
+  min-height: 180px;
+  padding: 20px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, var(--surface), var(--surface-soft));
+  border: 1px solid rgba(141, 104, 69, 0.12);
+}
+
+.power-card h3,
+.journey-card h3 {
+  margin: 14px 0 10px;
+  font-size: 1.28rem;
+}
+
+.power-card p,
+.journey-card p,
+.rule-list li {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.85;
+}
+
+.panel-compact {
+  background: rgba(248, 242, 235, 0.82);
+}
+
+.rule-list {
+  margin: 24px 0 0;
+  padding-left: 20px;
+}
+
+.rule-list li + li {
+  margin-top: 10px;
+}
+
+.notion-frame {
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 34px;
+  background: rgba(255, 253, 249, 0.92);
+  box-shadow: 0 24px 50px rgba(73, 57, 42, 0.08);
+}
+
+.notion {
+  font-family: var(--font-body), sans-serif;
+  color: var(--ink);
+}
+
+.notion-page {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.notion-title {
+  font-family: var(--font-display), serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.06;
+}
+
+.notion-text,
+.notion-list li,
+.notion-collection-card-property,
+.notion-collection-column-title {
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.notion-h,
+.notion-h1,
+.notion-h2,
+.notion-h3 {
+  color: var(--ink);
+  font-family: var(--font-display), serif;
+  font-weight: 400;
+}
+
+.notion-callout {
+  border: 1px solid rgba(141, 104, 69, 0.18);
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(255, 252, 248, 0.95), rgba(245, 237, 224, 0.65));
+}
+
+.notion-quote {
+  border-left: 3px solid var(--gold);
+  color: var(--muted);
+}
+
+.notion-link {
+  color: var(--clay);
+  text-decoration-color: rgba(166, 106, 74, 0.35);
+}
+
+.notion-table-of-contents {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(245, 237, 224, 0.48);
+}
+
+.notion-collection {
+  padding: 10px 0;
+}
+
+.connection-card {
+  margin-top: 26px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 253, 249, 0.9);
+  box-shadow: 0 20px 50px rgba(73, 57, 42, 0.08);
+}
+
+.connection-card h2 {
+  margin: 12px 0 14px;
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 400;
+}
+
+.connection-card p,
+.connection-card li {
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.publish-link {
+  display: inline-flex;
+  margin-top: 18px;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fffdf9;
+  text-decoration: none;
+}
+
+.academy-detail-shell {
+  padding-top: 32px;
+}
+
+.detail-hero {
+  margin-bottom: 16px;
+}
+
+.detail-hero h1 {
+  margin: 10px 0 0;
+  font-family: var(--font-display), serif;
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+@media (max-width: 960px) {
+  .academy-hero,
+  .highlight-row,
+  .power-list,
+  .journey-list {
+    grid-template-columns: 1fr;
+  }
+}

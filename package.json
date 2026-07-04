@@ -1,10 +1,37 @@
 {
-  "name": "3000-coaching-system",
+  "name": "sanq-platform",
   "private": true,
   "version": "1.0.0",
-  "description": "五力陪跑系統教練天賦測驗",
+  "description": "SANQ 團隊入口、天賦測驗與五力教練學院 monorepo",
+  "packageManager": "npm@10.9.8",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:portal": "npm run dev --workspace @sanq/portal",
+    "dev:academy": "npm run dev --workspace @sanq/academy",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck"
+  },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "qrcode": "^1.5.4"
+    "next": "^16.0.0",
+    "notion-client": "^7.10.0",
+    "notion-types": "^7.10.0",
+    "notion-utils": "^7.10.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-notion-x": "^7.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3"
   }
 }
