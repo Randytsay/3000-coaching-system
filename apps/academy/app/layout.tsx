@@ -23,7 +23,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-Hant" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body>
+        <header className="site-header">
+          <div className="nav-container">
+            <a href="https://sanq.ccwu.cc" className="logo">
+              <span className="logo-sparkle">✨</span> SANQ 五力教練系統
+            </a>
+            <nav className="nav-links">
+              <a href="https://sanq.ccwu.cc" className="nav-item">🏠 首頁</a>
+              <a href="https://academy.sanq.ccwu.cc" className="nav-item">📖 教練學院</a>
+              <a href="https://academy.sanq.ccwu.cc#journey" className="nav-item">🚩 90天陪跑</a>
+              <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn">🎯 開始測驗</a>
+            </nav>
+          </div>
+        </header>
+        {children}
+      </body>
     </html>
   );
 }
