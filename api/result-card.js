@@ -1,7 +1,6 @@
-const fs = require("node:fs");
 const path = require("node:path");
+const {Resvg} = require("@resvg/resvg-js");
 const QRCode = require("qrcode");
-const sharp = require("sharp");
 
 const TYPE_DATA = [
   {key:"A", name:"關係力", coach:"關係教練", color:"#FF6F91"},
@@ -25,7 +24,6 @@ const DEVELOPMENT = {
   E:"每週固定發布一則真實、清楚且只有一個重點的內容。"
 };
 const LIFF_URL = "https://liff.line.me/2010602059-PZay1fzR";
-let fontBase64;
 
 function escapeXml(value){
   return String(value).replace(/[<>&"']/g, char=>({"<":"&lt;",">":"&gt;","&":"&amp;","\"":"&quot;","'":"&apos;"}[char]));
@@ -46,14 +44,6 @@ function point(index, factor, cx=540, cy=570, radius=245){
 function textLines(lines, x, y, options={}){
   const {size=32, fill="#4A3B78", weight=400, lineHeight=1.45, anchor="start"} = options;
   return `<text x="${x}" y="${y}" text-anchor="${anchor}" fill="${fill}" font-size="${size}" font-weight="${weight}">${lines.map((line,index)=>`<tspan x="${x}" dy="${index===0?0:size*lineHeight}">${escapeXml(line)}</tspan>`).join("")}</text>`;
-}
-
-function getFont(){
-  if(!fontBase64){
-    const fontPath = path.join(process.cwd(),"assets","fonts","NotoSansCJKtc-Regular.otf");
-    fontBase64 = fs.readFileSync(fontPath).toString("base64");
-  }
-  return fontBase64;
 }
 
 module.exports = async function handler(req,res){
@@ -104,7 +94,7 @@ module.exports = async function handler(req,res){
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF7EC"/><stop offset="1" stop-color="#F3EEFF"/></linearGradient>
         <linearGradient id="title" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5B2C82"/><stop offset="1" stop-color="#FF6F91"/></linearGradient>
-        <style>@font-face{font-family:'NotoTC';src:url(data:font/otf;base64,${getFont()}) format('opentype')}text{font-family:'NotoTC',sans-serif}</style>
+        <style>text{font-family:'Noto Sans CJK TC',sans-serif}</style>
       </defs>
       <rect width="1080" height="1350" fill="url(#bg)"/>
       <rect x="46" y="42" width="988" height="1266" rx="52" fill="#FFFFFF" opacity="0.96"/>
@@ -124,7 +114,12 @@ module.exports = async function handler(req,res){
       <text x="92" y="1294" fill="#8F85A4" font-size="20">掃描 QR Code，找到你的教練天賦</text>
     </svg>`;
 
-    const png = await sharp(Buffer.from(svg)).png({quality:95,compressionLevel:8}).toBuffer();
+    const fontPath = path.join(process.cwd(),"assets","fonts","NotoSansCJKtc-Regular.otf");
+    const renderer = new Resvg(svg,{
+      fitTo:{mode:"width",value:1080},
+      font:{fontFiles:[fontPath],loadSystemFonts:false,defaultFontFamily:"Noto Sans CJK TC"}
+    });
+    const png = renderer.render().asPng();
     res.setHeader("Content-Type","image/png");
     res.setHeader("Content-Disposition",`inline; filename*=UTF-8''${encodeURIComponent(`${name}-五力教練天賦.png`)}`);
     res.setHeader("Cache-Control","public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800");
