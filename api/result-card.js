@@ -78,6 +78,16 @@ module.exports = async function handler(req,res){
     const minScore = candidates.length ? Math.min(...candidates.map(item=>item.score)) : null;
     const developmentIndex = minScore === null ? null : candidates.find(item=>item.score===minScore).index;
     const primaryKeys = primaryIndexes.map(index=>TYPE_DATA[index].key);
+
+    // 計算副修天賦（當只有一個主修時，取次高分者為副修）
+    const sortedIndexes = [0,1,2,3,4].sort((a,b)=>scores[b]-scores[a]);
+    const secondaryIndex = primaryIndexes.length === 1
+      ? (sortedIndexes.find(idx => scores[idx] < topScore) ?? null)
+      : null;
+    const secondaryKey = secondaryIndex !== null ? TYPE_DATA[secondaryIndex].key : null;
+    const secondaryCoach = secondaryIndex !== null ? TYPE_DATA[secondaryIndex].coach : "";
+    const secondaryDesc = secondaryIndex !== null ? SINGLE_ANALYSES[secondaryKey] : "";
+
     let analysisText = "";
     if (primaryIndexes.length === 1) {
       analysisText = SINGLE_ANALYSES[primaryKeys[0]];
@@ -119,30 +129,66 @@ module.exports = async function handler(req,res){
       const {x,y,anchor}=labelPositions[i];
       return textLines([`${type.name} ${scores[i]}`],x,y,{size:28,fill:"#4A3B78",weight:700,anchor});
     }).join("");
-    const qrDataUrl = await QRCode.toDataURL(LIFF_URL,{width:180,margin:1,color:{dark:"#5B2C82",light:"#FFFFFF"}});
-    const qrBase64 = qrDataUrl.split(",")[1];
+    // 依據是否有副修天賦決定成果圖卡的排版結構 (三箱式 vs. 兩箱式)
+    let contentSvg = "";
 
-    // 依據字數動態調整成果圖卡上的解析文字字體大小與排版，確保完整文字可以塞下不溢出
-    const charCount = analysisText.length;
-    let fontSize = 27;
-    let lineHeight = 1.45;
-    let charsPerLine = 31;
-    let maxLines = 12;
+    if (secondaryIndex !== null) {
+      // 1. 三箱式版面 (主修解析 + 副修天賦 + 下一步發展)
+      const mainLines = wrapParagraphs(analysisText, 38).slice(0, 4);
+      const secLines = wrapParagraphs(secondaryDesc, 38).slice(0, 4);
+      const devLines = wrapText(developmentText, 38).slice(0, 3);
 
-    if (charCount > 180) {
-      fontSize = 18;
-      lineHeight = 1.35;
-      charsPerLine = 47;
-      maxLines = 18;
-    } else if (charCount > 100) {
-      fontSize = 22;
-      lineHeight = 1.4;
-      charsPerLine = 38;
-      maxLines = 14;
+      contentSvg = `
+      <!-- 你的專屬解析 -->
+      <rect x="92" y="850" width="896" height="235" rx="24" fill="#FFF7EC"/>
+      <text x="128" y="900" fill="#FF6F91" font-size="28" font-weight="700">你的專屬解析</text>
+      \${textLines(mainLines, 128, 948, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+
+      <!-- 副修天賦 -->
+      <rect x="92" y="1105" width="896" height="235" rx="24" fill="#EEF7FF"/>
+      <text x="128" y="1155" fill="#4B9CD3" font-size="28" font-weight="700">副修天賦：${secondaryCoach}</text>
+      \${textLines(secLines, 128, 1203, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+
+      <!-- 下一步發展 -->
+      <rect x="92" y="1360" width="896" height="195" rx="24" fill="#F0FBF8"/>
+      <text x="128" y="1410" fill="#3CA99A" font-size="28" font-weight="700">下一步發展</text>
+      \${textLines(devLines, 128, 1458, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      `;
+    } else {
+      // 2. 兩箱式版面 (主修解析多重並列 + 下一步發展，無副修)
+      const charCount = analysisText.length;
+      let fontSize = 27;
+      let lineHeight = 1.45;
+      let charsPerLine = 31;
+      let maxLines = 12;
+
+      if (charCount > 180) {
+        fontSize = 18;
+        lineHeight = 1.35;
+        charsPerLine = 47;
+        maxLines = 18;
+      } else if (charCount > 100) {
+        fontSize = 22;
+        lineHeight = 1.4;
+        charsPerLine = 38;
+        maxLines = 14;
+      }
+
+      const mainLines = wrapParagraphs(analysisText, charsPerLine).slice(0, maxLines);
+      const devLines = wrapText(developmentText, 38).slice(0, 3);
+
+      contentSvg = `
+      <!-- 你的專屬解析 -->
+      <rect x="92" y="850" width="896" height="465" rx="24" fill="#FFF7EC"/>
+      <text x="128" y="900" fill="#FF6F91" font-size="28" font-weight="700">你的專屬解析</text>
+      \${textLines(mainLines, 128, 948, {size: fontSize, fill: "#4A3B78", lineHeight: lineHeight})}
+
+      <!-- 下一步發展 -->
+      <rect x="92" y="1335" width="896" height="220" rx="24" fill="#F0FBF8"/>
+      <text x="128" y="1385" fill="#3CA99A" font-size="28" font-weight="700">下一步發展</text>
+      \${textLines(devLines, 128, 1435, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      `;
     }
-
-    const analysisLines = wrapParagraphs(analysisText, charsPerLine).slice(0, maxLines);
-    const developmentLines = wrapText(developmentText, 31).slice(0, 3);
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="1080" height="1800" viewBox="0 0 1080 1800" xmlns="http://www.w3.org/2000/svg">
@@ -154,19 +200,14 @@ module.exports = async function handler(req,res){
       <rect width="1080" height="1800" fill="url(#bg)"/>
       <rect x="46" y="42" width="988" height="1716" rx="52" fill="#FFFFFF" opacity="0.96"/>
       <text x="540" y="112" text-anchor="middle" fill="#7E7398" font-size="26" font-weight="700">五力陪跑系統｜教練天賦分析</text>
-      ${textLines([`${name} 的五力雷達圖`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
+      \${textLines([\`\${name} 的五力雷達圖\`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
       <rect x="220" y="205" width="640" height="68" rx="34" fill="url(#title)"/>
-      ${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
-      ${grid}${axes}${radar}${labels}
-      <rect x="92" y="872" width="896" height="500" rx="28" fill="#FFF7EC"/>
-      <text x="128" y="925" fill="#FF6F91" font-size="29" font-weight="700">你的專屬解析</text>
-      ${textLines(analysisLines,128,978,{size:fontSize,fill:"#4A3B78",lineHeight:lineHeight})}
-      <rect x="92" y="1396" width="896" height="178" rx="28" fill="#F0FBF8"/>
-      <text x="128" y="1449" fill="#3CA99A" font-size="29" font-weight="700">下一步發展</text>
-      ${textLines(developmentLines,128,1502,{size:27,fill:"#4A3B78",lineHeight:1.45})}
-      <image href="data:image/png;base64,${qrBase64}" x="824" y="1600" width="126" height="126"/>
-      <text x="92" y="1662" fill="#8F85A4" font-size="20">此圖呈現個人相對傾向，不代表能力高低</text>
-      <text x="92" y="1696" fill="#8F85A4" font-size="20">掃描 QR Code，找到你的教練天賦</text>
+      \${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
+      \${grid}\${axes}\${radar}\${labels}
+      \${contentSvg}
+      <!-- 頁尾品牌宣告 (取代舊 QR Code) -->
+      <text x="540" y="1655" text-anchor="middle" fill="#5B2C82" font-size="22" font-weight="700">五力陪跑系統 ｜ 找到你的教練天賦</text>
+      <text x="540" y="1695" text-anchor="middle" fill="#8F85A4" font-size="19">此圖呈現個人相對傾向，不代表能力高低</text>
     </svg>`;
 
     const fontPath = path.join(process.cwd(),"assets","fonts","NotoSansCJKtc-Regular.otf");
