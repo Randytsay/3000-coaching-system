@@ -293,6 +293,26 @@
     background: linear-gradient(135deg, var(--c-primary), var(--c-accent));
     color: #fff;
   }
+  .quiz-nav {
+    display:flex;
+    justify-content:flex-start;
+    margin-top: 12px;
+  }
+  .prev-btn {
+    appearance:none;
+    background:transparent;
+    border:none;
+    border-radius:999px;
+    color:var(--c-ink-soft);
+    cursor:pointer;
+    font:inherit;
+    font-size:13px;
+    font-weight:650;
+    min-height:44px;
+    padding:8px 12px;
+  }
+  .prev-btn:hover { background:#f3eeff; color:var(--c-primary); }
+  .prev-btn:focus-visible { outline:3px solid rgba(184,156,255,0.4); outline-offset:2px; }
 
   /* ---------- 結果頁 ---------- */
   #resultScreen { display:none; text-align:center; }
@@ -520,6 +540,9 @@
     </div>
     <div class="q-title" id="qTitle"></div>
     <div class="options" id="optionsWrap"></div>
+    <div class="quiz-nav">
+      <button type="button" id="prevBtn" class="prev-btn" onclick="goPreviousQuestion()">← 上一題</button>
+    </div>
   </div>
 
   <!-- 彩蛋題頁 -->
@@ -736,18 +759,26 @@ const optKeys = ["A","B","C","D","E"];
 
 let current = 0;
 let scores = {A:0,B:0,C:0,D:0,E:0};
+let answers = Array(questions.length).fill(null);
 let userName = "";
 let bonusAnswer = "";
 let isTransitioning = false;
 let isSubmitting = false;
 let submitted = false;
 
-const STORAGE_KEY = "coachingQuizProgressV1";
+const STORAGE_KEY = "coachingQuizProgressV2";
+
+function recalculateScores(){
+  scores = {A:0,B:0,C:0,D:0,E:0};
+  answers.forEach(type=>{
+    if(optKeys.includes(type)) scores[type]++;
+  });
+}
 
 function saveProgress(screen){
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-      current, scores, userName, bonusAnswer, screen, submitted
+      current, scores, answers, userName, bonusAnswer, screen, submitted
     }));
   } catch (error) {
     console.warn("無法暫存測驗進度", error);
@@ -757,12 +788,14 @@ function saveProgress(screen){
 function restoreProgress(){
   try {
     const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY));
-    const validScores = saved && optKeys.every(k => Number.isInteger(saved.scores?.[k]) && saved.scores[k] >= 0);
-    const total = validScores ? optKeys.reduce((sum, k) => sum + saved.scores[k], 0) : -1;
-    if (!validScores || !Number.isInteger(saved.current) || saved.current < 0 || saved.current > questions.length || total !== saved.current) return;
+    const validCurrent = saved && Number.isInteger(saved.current) && saved.current >= 0 && saved.current <= questions.length;
+    const validAnswers = validCurrent && Array.isArray(saved.answers) && saved.answers.length === questions.length
+      && saved.answers.every((answer, index) => index < saved.current ? optKeys.includes(answer) : answer === null);
+    if (!validAnswers) return;
 
     current = saved.current;
-    scores = saved.scores;
+    answers = saved.answers;
+    recalculateScores();
     userName = typeof saved.userName === "string" ? saved.userName : "";
     bonusAnswer = typeof saved.bonusAnswer === "string" ? saved.bonusAnswer : "";
     submitted = saved.submitted === true;
@@ -842,6 +875,9 @@ function renderQuestion(){
   document.getElementById("qPercentLabel").textContent = pct+"%";
   document.getElementById("progressFill").style.width = pct+"%";
   document.getElementById("qTitle").textContent = `${current+1}. ${q.q}`;
+  const prevBtn = document.getElementById("prevBtn");
+  prevBtn.style.visibility = current === 0 ? "hidden" : "visible";
+  prevBtn.disabled = current === 0;
 
   /* 每次進入此題都重新隨機排列選項顯示順序 */
   const shuffledOpts = shuffle(q.opts);
@@ -884,7 +920,9 @@ function selectOption(type){
   if (isTransitioning || !optKeys.includes(type)) return;
   isTransitioning = true;
   document.querySelectorAll("#optionsWrap .opt-btn").forEach(btn => btn.disabled = true);
-  scores[type]++;
+  document.getElementById("prevBtn").disabled = true;
+  answers[current] = type;
+  recalculateScores();
   updateMiniScores();
   current++;
   saveProgress(current < questions.length ? "quiz" : "bonus");
@@ -893,6 +931,16 @@ function selectOption(type){
   } else {
     setTimeout(showBonus, 300);
   }
+}
+
+function goPreviousQuestion(){
+  if(isTransitioning || current <= 0) return;
+  current--;
+  answers.fill(null, current);
+  recalculateScores();
+  updateMiniScores();
+  saveProgress("quiz");
+  renderQuestion();
 }
 
 function showBonus(){
