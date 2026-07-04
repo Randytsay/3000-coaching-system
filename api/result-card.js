@@ -78,11 +78,22 @@ module.exports = async function handler(req,res){
     const minScore = candidates.length ? Math.min(...candidates.map(item=>item.score)) : null;
     const developmentIndex = minScore === null ? null : candidates.find(item=>item.score===minScore).index;
     const primaryKeys = primaryIndexes.map(index=>TYPE_DATA[index].key);
-    const analysisText = primaryIndexes.length === 1
-      ? SINGLE_ANALYSES[primaryKeys[0]]
-      : primaryIndexes.length === 2
-        ? DUAL_ANALYSES[[...primaryKeys].sort().join("")]
-        : `你的最高分由 ${primaryIndexes.map(index=>TYPE_DATA[index].coach).join("、")} 並列，這些都是你的主修天賦。你擁有跨領域的帶人能力，可以依不同情境切換最適合的角色。`;
+    let analysisText = "";
+    if (primaryIndexes.length === 1) {
+      analysisText = SINGLE_ANALYSES[primaryKeys[0]];
+    } else if (primaryIndexes.length === 2) {
+      analysisText = DUAL_ANALYSES[[...primaryKeys].sort().join("")];
+    } else {
+      const names = primaryIndexes.map(index => TYPE_DATA[index].coach).join("、");
+      analysisText = `你同時並列了 ${names} 的主修天賦！這代表你是一位「多元全能型陪跑者」，在團隊中具備高度靈活性：\n` +
+        primaryIndexes.map(index => {
+          const key = TYPE_DATA[index].key;
+          const name = TYPE_DATA[index].coach;
+          const desc = SINGLE_ANALYSES[key].split(/[。！]/)[0] + "。";
+          return `【${name}】${desc}`;
+        }).join("\n") +
+        `\n建議你可配合新人的階段切換最適合的引導角色。`;
+    }
     const developmentText = developmentIndex === null
       ? "你的五力相當均衡，可以依團隊需要選擇一項深入發展。"
       : DEVELOPMENT[TYPE_DATA[developmentIndex].key];

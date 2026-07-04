@@ -688,7 +688,12 @@
 <div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageModalText">
   <div class="image-modal-card">
     <img id="imageModalPreview" alt="可長按儲存的教練天賦成果圖">
-    <p id="imageModalText">請長按圖片並選擇「儲存圖片」。若 LINE 內無法儲存，請改用外部瀏覽器開啟。</p>
+    <div id="imageModalText" style="color:var(--c-ink); font-size:14px; font-weight:700; margin:12px 0; background:#fff7ec; border:1px solid #ffd93d; padding:10px; border-radius:12px; text-align:left; line-height:1.5;">
+      👆 長按上方圖片，選擇「儲存影像」或「分享」。<br>
+      <span style="font-size:12px; font-weight:500; color:var(--c-ink-soft); display:block; margin-top:4px;">
+        注意：若在 LINE 內長按無反應，請點擊下方「用瀏覽器開啟」，在外部瀏覽器進行長按儲存。
+      </span>
+    </div>
     <div class="modal-actions">
       <button id="openExternalBtn" onclick="openCardExternally()">用瀏覽器開啟</button>
       <button id="closeImageModalBtn" onclick="closeImageModal()">關閉</button>
@@ -891,6 +896,7 @@ let submitted = false;
 let liffReady = false;
 let lineProfile = null;
 let currentCardUrl = "";
+let localCardBlobUrl = "";
 
 const STORAGE_KEY = "coachingQuizProgressV2";
 
@@ -947,12 +953,30 @@ function restoreProgress(){
 
 function resetQuiz(){
   sessionStorage.removeItem(STORAGE_KEY);
+  if (localCardBlobUrl) {
+    URL.revokeObjectURL(localCardBlobUrl);
+    localCardBlobUrl = "";
+  }
   location.reload();
 }
 
 async function initLiffIntegration(){
   const status = document.getElementById("lineNameStatus");
-  if(!window.liff){
+  
+  // 輪詢等待 window.liff 載入（因 defer 屬性可能造成的非同步延遲）
+  let liffSdk = window.liff;
+  if (!liffSdk) {
+    for (let i = 0; i < 30; i++) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      if (window.liff) {
+        liffSdk = window.liff;
+        break;
+      }
+    }
+  }
+
+  if(!liffSdk){
+    console.warn("LINE LIFF SDK 載入超時，請檢查網路連線或 script 標籤");
     status.textContent = "";
     return;
   }
@@ -972,7 +996,7 @@ async function initLiffIntegration(){
     }
   } catch(error){
     console.warn("LIFF 初始化失敗，改用一般瀏覽器模式", error);
-    status.textContent = "";
+    status.textContent = `LIFF 未就緒 (測試環境/未登入): ${error.message || error}`;
   }
 }
 
@@ -1209,6 +1233,23 @@ function updateResultCardPreview(){
   };
 }
 
+function getCombinedTieDescription(primaryKeys) {
+  if (primaryKeys.length === 1) return types[primaryKeys[0]].desc;
+  if (primaryKeys.length === 2) {
+    const dualKey = primaryKeys.slice().sort().join("");
+    return dualTypeDescriptions[dualKey] || "";
+  }
+  const names = primaryKeys.map(k => types[k].name).join("、");
+  const intro = `你同時並列了 ${names} 的主修天賦！這代表你是一位「多元全能型陪跑者」，在團隊中具備高度靈活性：\n\n`;
+  const bullets = primaryKeys.map(k => {
+    const t = types[k];
+    const firstSentence = t.desc.split(/[。！]/)[0] + "。";
+    return `${t.emoji} 【${t.name}】${firstSentence}`;
+  }).join("\n");
+  const advice = `\n\n💡 建議：你擁有跨領域的帶人能力，能配合新人的不同階段切換最適合的引導角色。在實習階段，您可以挑選其中最熟悉的一項作為主攻方向。`;
+  return intro + bullets + advice;
+}
+
 function showResult(celebrate = true){
   document.getElementById("startScreen").style.display="none";
   document.getElementById("quizScreen").style.display="none";
@@ -1224,12 +1265,7 @@ function showResult(celebrate = true){
   document.getElementById("resultEmoji").textContent = primaryTypes.map(t => t.emoji).join("");
   document.getElementById("resultTitle").textContent = `${userName ? userName + "，" : ""}你是「${primaryNames}」${isTie ? "並列主修" : "型"}`;
   document.getElementById("resultSub").textContent = primaryTypes.map(t => t.en).join(" × ");
-  const dualKey = primaryKeys.slice().sort().join("");
-  document.getElementById("resultDesc").textContent = primaryTypes.length === 2
-    ? dualTypeDescriptions[dualKey]
-    : isTie
-      ? `你的最高分由 ${primaryTypes.map(t => t.name).join("、")} 並列，這些都是你的主修天賦。你擁有跨領域的帶人能力，可以依不同情境切換最適合的角色。`
-      : primaryTypes[0].desc;
+  document.getElementById("resultDesc").textContent = getCombinedTieDescription(primaryKeys);
 
   const secondaryBox = document.getElementById("secondaryBox");
   if (secondaryKey) {
@@ -1276,7 +1312,8 @@ async function shareToLine(){
   const {primaryKeys} = getResultRanking();
   const primaryLabel = primaryKeys.map(key=>types[key].name).join(" × ");
   if(!liffReady){
-    setShareStatus("LINE 分享功能尚未就緒，請改用系統分享，或從 LIFF 連結重新開啟。 ");
+    setShareStatus("💬 LINE 分享功能只在正式網域或透過 LIFF 連結開啟時支援，本環境已自動切換為系統分享/長按儲存");
+    openImageModal();
     return;
   }
   if(!liff.isLoggedIn()){
@@ -1284,19 +1321,93 @@ async function shareToLine(){
     return;
   }
   if(!liff.isApiAvailable("shareTargetPicker")){
-    setShareStatus("目前環境不支援好友選擇器，請改用「分享成果圖」。");
+    setShareStatus("目前環境不支援好友選擇器，請點選下方儲存並手動發送。");
+    openImageModal();
     return;
   }
   setShareStatus("正在開啟 LINE 好友／群組選擇器…");
   try {
     const response = await liff.shareTargetPicker([
-      {type:"image", originalContentUrl:currentCardUrl, previewImageUrl:currentCardUrl},
-      {type:"text", text:`${userName} 的五力教練天賦：${primaryLabel}\n一起探索你的教練天賦：${LIFF_URL}`}
+      {
+        type: "flex",
+        altText: `【${userName}】分享了教練天賦測驗結果！`,
+        contents: {
+          type: "bubble",
+          hero: {
+            type: "image",
+            url: currentCardUrl,
+            size: "full",
+            aspectRatio: "1080:1350",
+            aspectMode: "cover",
+            action: {
+              type: "uri",
+              uri: LIFF_URL
+            }
+          },
+          body: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "text",
+                text: "五力陪跑系統｜教練天賦分析",
+                weight: "bold",
+                size: "sm",
+                color: "#7E7398"
+              },
+              {
+                type: "text",
+                text: `${userName} 的教練天賦是：`,
+                weight: "bold",
+                size: "md",
+                margin: "md",
+                color: "#4A3B78"
+              },
+              {
+                type: "text",
+                text: `🏆 ${primaryLabel}`,
+                weight: "bold",
+                size: "xxl",
+                margin: "xs",
+                color: "#5B2C82"
+              },
+              {
+                type: "text",
+                text: "20題測出你是哪種教練：關係、工具、零售、招募、自媒體，找到你最能發光的位置！",
+                size: "xs",
+                color: "#8F85A4",
+                margin: "md",
+                wrap: true
+              }
+            ]
+          },
+          footer: {
+            type: "box",
+            layout: "vertical",
+            spacing: "sm",
+            contents: [
+              {
+                type: "button",
+                style: "primary",
+                height: "sm",
+                color: "#5B2C82",
+                action: {
+                  type: "uri",
+                  label: "🧭 立即測驗我的天賦",
+                  uri: LIFF_URL
+                }
+              }
+            ],
+            flex: 0
+          }
+        }
+      }
     ], {isMultiple:true});
     setShareStatus(response ? "✓ 已分享至你選擇的 LINE 對象" : "已取消分享");
   } catch(error){
     console.error("LINE 分享失敗", error);
-    setShareStatus("LINE 分享失敗，請改用系統分享或稍後再試。");
+    setShareStatus("LINE 分享失敗，已為您開啟儲存卡片。");
+    openImageModal();
   }
 }
 
@@ -1313,7 +1424,7 @@ async function shareWithSystem(){
   try {
     const file = await fetchResultCardFile();
     if(navigator.share && navigator.canShare?.({files:[file]})){
-      await navigator.share({title:"我的五力教練天賦",text:"這是我的五力教練天賦分析",files:[file]});
+      await navigator.share({title:"我的五力教練天賦",text:"這是我的五力教練天賦 analysis",files:[file]});
       setShareStatus("✓ 已開啟系統分享");
     } else {
       openImageModal();
@@ -1352,9 +1463,30 @@ async function downloadResultCard(){
   }
 }
 
-function openImageModal(){
-  document.getElementById("imageModalPreview").src = currentCardUrl;
-  document.getElementById("imageModal").classList.add("open");
+async function prepareLocalCardUrl() {
+  if (localCardBlobUrl) return localCardBlobUrl;
+  try {
+    const file = await fetchResultCardFile();
+    localCardBlobUrl = URL.createObjectURL(file);
+    return localCardBlobUrl;
+  } catch (e) {
+    console.error("無法快取圖片，改用遠端連結", e);
+    return currentCardUrl;
+  }
+}
+
+async function openImageModal(){
+  setShareStatus("正在載入成果圖...");
+  try {
+    const srcUrl = await prepareLocalCardUrl();
+    document.getElementById("imageModalPreview").src = srcUrl;
+    document.getElementById("imageModal").classList.add("open");
+    setShareStatus("");
+  } catch (error) {
+    document.getElementById("imageModalPreview").src = currentCardUrl;
+    document.getElementById("imageModal").classList.add("open");
+    setShareStatus("載入失敗，已使用遠端圖檔");
+  }
 }
 
 function closeImageModal(){
