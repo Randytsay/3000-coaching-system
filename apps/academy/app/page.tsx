@@ -100,7 +100,7 @@ export default async function AcademyHome() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section id="journey" className="section-block">
           <div className="section-heading">
             <p className="eyebrow">90 天 SOP</p>
             <h2>公開 SOP 還在建置中，但資料結構已經接上。</h2>
