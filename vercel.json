@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/result-card.js": {
+      "includeFiles": "assets/fonts/**",
+      "maxDuration": 10
+    }
+  }
+}

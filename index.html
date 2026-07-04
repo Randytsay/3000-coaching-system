@@ -37,6 +37,7 @@
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="assets/manifest.json">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
 
 <title>找到你的教練天賦｜五力陪跑系統</title>
 <style>
@@ -397,6 +398,87 @@
     text-align:left; line-height:1.8;
   }
   .secondary-box b { color: var(--c-primary); }
+  .radar-panel {
+    background:linear-gradient(145deg,#fffaf4,#f7f2ff);
+    border:1px solid rgba(184,156,255,0.2);
+    border-radius:22px;
+    margin-bottom:18px;
+    padding:14px 10px 10px;
+  }
+  .radar-heading {
+    color:var(--c-primary);
+    font-size:15px;
+    font-weight:800;
+    margin:2px 0 4px;
+  }
+  .radar-note { color:var(--c-ink-soft); font-size:11px; line-height:1.5; }
+  #radarChart { display:block; margin:0 auto; max-width:430px; width:100%; }
+  .development-box {
+    background:linear-gradient(135deg,#f0fbf8,#f8f3ff);
+    border-left:4px solid var(--c-mint);
+    border-radius:16px;
+    color:var(--c-ink);
+    font-size:clamp(12.5px,3.4vw,14px);
+    line-height:1.8;
+    margin-bottom:20px;
+    padding:15px 17px;
+    text-align:left;
+  }
+  .development-box b { color:var(--c-primary); }
+  .result-card-panel {
+    background:#fff;
+    border:1px solid rgba(184,156,255,0.22);
+    border-radius:20px;
+    box-shadow:0 8px 24px rgba(91,44,130,0.08);
+    margin:4px 0 20px;
+    overflow:hidden;
+    padding:12px;
+  }
+  .result-card-panel img {
+    background:var(--c-cream);
+    border-radius:14px;
+    display:block;
+    height:auto;
+    width:100%;
+  }
+  .result-card-caption { color:var(--c-ink-soft); font-size:11px; margin-top:9px; }
+  .share-btn { color:#fff; }
+  #lineShareBtn { background:#06c755; }
+  #systemShareBtn { background:linear-gradient(135deg,var(--c-media),var(--c-primary)); }
+  #downloadCardBtn { background:linear-gradient(135deg,var(--c-accent),#ff9a76); }
+  #shareStatus { color:var(--c-ink-soft); font-size:12px; line-height:1.6; min-height:20px; margin:10px 0 2px; }
+  .line-name-status { color:var(--c-mint); font-size:11.5px; min-height:18px; margin-top:4px; }
+  .privacy-link { color:var(--c-ink-soft); display:inline-block; font-size:11px; margin-top:14px; }
+  .image-modal {
+    align-items:center;
+    background:rgba(35,22,55,0.78);
+    display:none;
+    inset:0;
+    justify-content:center;
+    padding:18px;
+    position:fixed;
+    z-index:1000;
+  }
+  .image-modal.open { display:flex; }
+  .image-modal-card {
+    background:#fff;
+    border-radius:20px;
+    max-height:94vh;
+    max-width:460px;
+    overflow:auto;
+    padding:14px;
+    text-align:center;
+    width:100%;
+  }
+  .image-modal-card img { border-radius:12px; display:block; height:auto; width:100%; }
+  .image-modal-card p { color:var(--c-ink); font-size:13px; line-height:1.7; margin:10px 4px; }
+  .modal-actions { display:flex; gap:8px; justify-content:center; }
+  .modal-actions button {
+    border:0; border-radius:999px; cursor:pointer; font-weight:700;
+    min-height:44px; padding:10px 16px;
+  }
+  #openExternalBtn { background:var(--c-primary); color:#fff; }
+  #closeImageModalBtn { background:#efeaf6; color:var(--c-ink); }
 
   /* ---------- 彩蛋題 ---------- */
   .bonus-box {
@@ -528,8 +610,10 @@
     </div>
     <div style="font-size:12.5px; color:var(--c-ink-soft); margin:8px 0 4px;">共 20 題＋1 個小彩蛋</div>
     <input id="userName" class="name-input" type="text" placeholder="請輸入你的名字（送出結果前填寫即可）" autocomplete="name">
+    <div id="lineNameStatus" class="line-name-status"></div>
     <br>
     <button class="start-btn" onclick="startQuiz()">🚀 開始探索</button>
+    <br><a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">隱私權說明</a>
   </div>
 
   <!-- 測驗頁 -->
@@ -576,14 +660,40 @@
     <div class="color-band" aria-hidden="true">
       <span class="b-A"></span><span class="b-B"></span><span class="b-C"></span><span class="b-D"></span><span class="b-E"></span>
     </div>
+    <div class="radar-panel">
+      <div class="radar-heading">你的五力傾向雷達圖</div>
+      <div class="radar-note">呈現你個人五項傾向的相對分布，不代表能力高低</div>
+      <svg id="radarChart" viewBox="0 0 430 390" role="img" aria-label="五力傾向雷達圖"></svg>
+    </div>
     <div id="resultDesc"></div>
     <div class="score-chart" id="scoreChart"></div>
     <div class="secondary-box" id="secondaryBox"></div>
+    <div class="development-box" id="developmentBox"></div>
+    <div class="result-card-panel">
+      <img id="resultCardPreview" alt="個人五力教練天賦分析成果圖">
+      <div class="result-card-caption">成果圖適合儲存到手機或分享到 LINE</div>
+    </div>
     <div class="action-btns">
+      <button id="lineShareBtn" class="share-btn" onclick="shareToLine()">💬 選擇 LINE 好友／群組</button>
+      <button id="systemShareBtn" class="share-btn" onclick="shareWithSystem()">📲 分享成果圖</button>
+      <button id="downloadCardBtn" class="share-btn" onclick="downloadResultCard()">🖼️ 儲存成果圖</button>
       <button id="retryBtn" onclick="resetQuiz()">🔄 重新測一次</button>
     </div>
+    <div id="shareStatus" aria-live="polite"></div>
+    <a class="privacy-link" href="privacy.html" target="_blank" rel="noopener">隱私權說明</a>
   </div>
 
+</div>
+
+<div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageModalText">
+  <div class="image-modal-card">
+    <img id="imageModalPreview" alt="可長按儲存的教練天賦成果圖">
+    <p id="imageModalText">請長按圖片並選擇「儲存圖片」。若 LINE 內無法儲存，請改用外部瀏覽器開啟。</p>
+    <div class="modal-actions">
+      <button id="openExternalBtn" onclick="openCardExternally()">用瀏覽器開啟</button>
+      <button id="closeImageModalBtn" onclick="closeImageModal()">關閉</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -759,7 +869,16 @@ const dualTypeDescriptions = {
   CE: "組合優勢｜你擅長把產品體驗轉化成清楚、有畫面的內容，讓看不見的價值被更多人理解。\n最適合｜產品實測、生活情境短影音、顧客故事與教育型內容，用真實細節累積可信度。\n留意｜避免誇大效果或只呈現完美結果；清楚標示個人經驗並遵守產品宣稱規範。",
   DE: "組合優勢｜你同時具備號召力與傳播力，能把願景說得令人想參與，並透過內容快速放大影響。\n最適合｜招募活動、直播、短影音企劃與團隊品牌造勢，將線上關注轉化為真實行動。\n留意｜避免只追求聲量與情緒高點；承諾之後要有清楚跟進，影響力才會沉澱成信任。"
 };
+const developmentDescriptions = {
+  A: "關係力｜每週安排一次不急著給答案的深度對話，練習先復述對方的感受與需求，再提出建議。",
+  B: "工具力｜挑一項常見任務整理成三步驟小卡，親自教一位夥伴完成，再依他的卡點調整流程。",
+  C: "零售力｜每週深入認識一項產品，記錄適合對象、使用情境與真實體驗，練習以需求而非推銷出發。",
+  D: "招募力｜每週完成兩次低壓力邀約演練，用提問了解對方想要的改變，再自然分享可能的下一步。",
+  E: "自媒體力｜每週固定發布一則真實、有單一重點的內容；先追求持續與清楚，再逐步提升拍攝和剪輯。"
+};
 const optKeys = ["A","B","C","D","E"];
+const LIFF_ID = "2010602059-PZay1fzR";
+const LIFF_URL = "https://liff.line.me/2010602059-PZay1fzR";
 
 let current = 0;
 let scores = {A:0,B:0,C:0,D:0,E:0};
@@ -769,6 +888,9 @@ let bonusAnswer = "";
 let isTransitioning = false;
 let isSubmitting = false;
 let submitted = false;
+let liffReady = false;
+let lineProfile = null;
+let currentCardUrl = "";
 
 const STORAGE_KEY = "coachingQuizProgressV2";
 
@@ -826,6 +948,36 @@ function restoreProgress(){
 function resetQuiz(){
   sessionStorage.removeItem(STORAGE_KEY);
   location.reload();
+}
+
+async function initLiffIntegration(){
+  const status = document.getElementById("lineNameStatus");
+  if(!window.liff){
+    status.textContent = "";
+    return;
+  }
+  try {
+    await liff.init({liffId: LIFF_ID});
+    liffReady = true;
+    if(liff.isInClient() && liff.isLoggedIn()){
+      lineProfile = await liff.getProfile();
+      const input = document.getElementById("userName");
+      if(!input.value.trim() && !userName.trim()){
+        input.value = lineProfile.displayName || "";
+        userName = input.value;
+      }
+      if(lineProfile.displayName){
+        status.textContent = `✓ 已帶入 LINE 名稱：${lineProfile.displayName}`;
+      }
+    }
+  } catch(error){
+    console.warn("LIFF 初始化失敗，改用一般瀏覽器模式", error);
+    status.textContent = "";
+  }
+}
+
+function isLineBrowser(){
+  return /Line\//i.test(navigator.userAgent) || (liffReady && liff.isInClient());
 }
 
 // Fisher-Yates 洗牌：只打亂顯示順序，type 屬性隨物件移動，不影響計分
@@ -971,7 +1123,85 @@ function getResultRanking(){
   return {sorted, primaryKeys, secondaryKey};
 }
 
+function createSvgElement(tag, attrs = {}, text = ""){
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  Object.entries(attrs).forEach(([key,value])=>el.setAttribute(key, value));
+  if(text) el.textContent = text;
+  return el;
+}
+
+function radarPoint(index, factor, radius = 126){
+  const angle = (-90 + index * 72) * Math.PI / 180;
+  return [215 + Math.cos(angle) * radius * factor, 185 + Math.sin(angle) * radius * factor];
+}
+
+function renderRadarChart(){
+  const svg = document.getElementById("radarChart");
+  svg.replaceChildren();
+  for(let level=1; level<=5; level++){
+    const points = optKeys.map((_,i)=>radarPoint(i, level/5).join(",")).join(" ");
+    svg.appendChild(createSvgElement("polygon", {
+      points, fill:level%2 ? "rgba(184,156,255,0.035)" : "rgba(127,216,197,0.035)",
+      stroke:"#ddd5ea", "stroke-width":"1"
+    }));
+  }
+  optKeys.forEach((_,i)=>{
+    const [x,y] = radarPoint(i,1);
+    svg.appendChild(createSvgElement("line", {x1:215,y1:185,x2:x,y2:y,stroke:"#e4ddeb","stroke-width":"1"}));
+  });
+  const maxScore = Math.max(...Object.values(scores),1);
+  const dataPoints = optKeys.map((key,i)=>radarPoint(i,scores[key]/maxScore));
+  svg.appendChild(createSvgElement("polygon", {
+    points:dataPoints.map(p=>p.join(",")).join(" "),
+    fill:"rgba(91,44,130,0.18)", stroke:"#5B2C82", "stroke-width":"3", "stroke-linejoin":"round"
+  }));
+  dataPoints.forEach(([x,y],i)=>{
+    svg.appendChild(createSvgElement("circle", {cx:x,cy:y,r:5,fill:types[optKeys[i]].color,stroke:"#fff","stroke-width":"2"}));
+  });
+  optKeys.forEach((key,i)=>{
+    const [x,y] = radarPoint(i,1.32);
+    const anchor = x < 190 ? "end" : x > 240 ? "start" : "middle";
+    const label = createSvgElement("text", {x,y,"text-anchor":anchor,fill:"#4A3B78","font-size":"13","font-weight":"700"}, `${types[key].name.replace("教練","")} ${scores[key]}`);
+    svg.appendChild(label);
+  });
+}
+
+function getDevelopmentKeys(primaryKeys){
+  if(primaryKeys.length === optKeys.length) return [];
+  const candidates = optKeys.filter(key=>!primaryKeys.includes(key));
+  const minScore = Math.min(...candidates.map(key=>scores[key]));
+  return candidates.filter(key=>scores[key] === minScore).slice(0,2);
+}
+
+function renderDevelopment(primaryKeys){
+  const box = document.getElementById("developmentBox");
+  const keys = getDevelopmentKeys(primaryKeys);
+  if(!keys.length){
+    box.innerHTML = "<b>🌈 五力均衡</b><br>你的五項傾向分布相當平均，下一步可以依團隊當下最需要的角色選擇一項深入發展。";
+    return;
+  }
+  box.innerHTML = `<b>🌱 可以加強的方向</b><br>${keys.map(key=>developmentDescriptions[key]).join("<br>")}`;
+}
+
+function getResultCardUrl(){
+  const url = new URL("/api/result-card", location.origin);
+  url.searchParams.set("name", userName.trim().slice(0,30));
+  url.searchParams.set("scores", optKeys.map(key=>scores[key]).join(","));
+  return url.href;
+}
+
+function updateResultCardPreview(){
+  currentCardUrl = getResultCardUrl();
+  const preview = document.getElementById("resultCardPreview");
+  preview.src = currentCardUrl;
+  preview.onerror = ()=>{
+    document.getElementById("shareStatus").textContent = "成果圖暫時無法載入，請稍後再試。";
+  };
+}
+
 function showResult(celebrate = true){
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("quizScreen").style.display="none";
   document.getElementById("bonusScreen").style.display="none";
   document.getElementById("resultScreen").style.display="block";
   window.scrollTo({top:0, behavior:"smooth"});
@@ -1000,6 +1230,10 @@ function showResult(celebrate = true){
     secondaryBox.style.display = "none";
   }
 
+  renderRadarChart();
+  renderDevelopment(primaryKeys);
+  updateResultCardPreview();
+
   const chart = document.getElementById("scoreChart");
   chart.innerHTML = "";
   const maxScore = Math.max(...Object.values(scores), 1);
@@ -1022,6 +1256,107 @@ function showResult(celebrate = true){
 
   saveProgress("result");
   if (celebrate) launchConfetti();
+}
+
+function setShareStatus(message){
+  document.getElementById("shareStatus").textContent = message;
+}
+
+async function shareToLine(){
+  const {primaryKeys} = getResultRanking();
+  const primaryLabel = primaryKeys.map(key=>types[key].name).join(" × ");
+  if(!liffReady){
+    setShareStatus("LINE 分享功能尚未就緒，請改用系統分享，或從 LIFF 連結重新開啟。 ");
+    return;
+  }
+  if(!liff.isLoggedIn()){
+    liff.login({redirectUri:location.href});
+    return;
+  }
+  if(!liff.isApiAvailable("shareTargetPicker")){
+    setShareStatus("目前環境不支援好友選擇器，請改用「分享成果圖」。");
+    return;
+  }
+  setShareStatus("正在開啟 LINE 好友／群組選擇器…");
+  try {
+    const response = await liff.shareTargetPicker([
+      {type:"image", originalContentUrl:currentCardUrl, previewImageUrl:currentCardUrl},
+      {type:"text", text:`${userName} 的五力教練天賦：${primaryLabel}\n一起探索你的教練天賦：${LIFF_URL}`}
+    ], {isMultiple:true});
+    setShareStatus(response ? "✓ 已分享至你選擇的 LINE 對象" : "已取消分享");
+  } catch(error){
+    console.error("LINE 分享失敗", error);
+    setShareStatus("LINE 分享失敗，請改用系統分享或稍後再試。");
+  }
+}
+
+async function fetchResultCardFile(){
+  const response = await fetch(currentCardUrl);
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  const blob = await response.blob();
+  const safeName = (userName.trim() || "我的").replace(/[\\/:*?"<>|]/g,"_");
+  return new File([blob], `${safeName}-五力教練天賦.png`, {type:"image/png"});
+}
+
+async function shareWithSystem(){
+  setShareStatus("正在準備成果圖…");
+  try {
+    const file = await fetchResultCardFile();
+    if(navigator.share && navigator.canShare?.({files:[file]})){
+      await navigator.share({title:"我的五力教練天賦",text:"這是我的五力教練天賦分析",files:[file]});
+      setShareStatus("✓ 已開啟系統分享");
+    } else {
+      openImageModal();
+      setShareStatus("你的瀏覽器不支援檔案分享，已開啟圖片儲存模式。");
+    }
+  } catch(error){
+    if(error.name !== "AbortError"){
+      console.error("系統分享失敗", error);
+      openImageModal();
+      setShareStatus("無法直接分享，請長按圖片儲存。");
+    }
+  }
+}
+
+async function downloadResultCard(){
+  if(isLineBrowser()){
+    openImageModal();
+    return;
+  }
+  setShareStatus("正在準備下載…");
+  try {
+    const file = await fetchResultCardFile();
+    const objectUrl = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+    setShareStatus("✓ 成果圖已開始下載");
+  } catch(error){
+    console.error("下載成果圖失敗", error);
+    openImageModal();
+    setShareStatus("無法直接下載，請長按圖片儲存。");
+  }
+}
+
+function openImageModal(){
+  document.getElementById("imageModalPreview").src = currentCardUrl;
+  document.getElementById("imageModal").classList.add("open");
+}
+
+function closeImageModal(){
+  document.getElementById("imageModal").classList.remove("open");
+}
+
+function openCardExternally(){
+  if(liffReady && liff.isInClient()){
+    liff.openWindow({url:currentCardUrl,external:true});
+  } else {
+    window.open(currentCardUrl,"_blank","noopener");
+  }
 }
 
 function launchConfetti(){
@@ -1101,6 +1436,8 @@ async function submitResult(){
   }
   const payload = {
     name: userName,
+    lineDisplayName: lineProfile?.displayName || "",
+    nameSource: lineProfile?.displayName && userName.trim() === lineProfile.displayName ? "LINE profile" : "manual",
     timestamp: new Date().toISOString(),
     primary: primaryKeys.map(k => types[k].name).join("、"),
     secondary: secondaryKey ? types[secondaryKey].name : (primaryKeys.length > 1 ? "無（並列主修）" : "無"),
@@ -1147,6 +1484,7 @@ async function submitResult(){
 }
 
 restoreProgress();
+window.addEventListener("DOMContentLoaded", initLiffIntegration);
 </script>
 
 </body>
