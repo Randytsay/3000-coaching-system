@@ -142,17 +142,17 @@ module.exports = async function handler(req,res){
       <!-- 你的專屬解析 -->
       <rect x="92" y="850" width="896" height="235" rx="24" fill="#FFF7EC"/>
       <text x="128" y="900" fill="#FF6F91" font-size="28" font-weight="700">你的專屬解析</text>
-      \${textLines(mainLines, 128, 948, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      ${textLines(mainLines, 128, 948, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
 
       <!-- 副修天賦 -->
       <rect x="92" y="1105" width="896" height="235" rx="24" fill="#EEF7FF"/>
       <text x="128" y="1155" fill="#4B9CD3" font-size="28" font-weight="700">副修天賦：${secondaryCoach}</text>
-      \${textLines(secLines, 128, 1203, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      ${textLines(secLines, 128, 1203, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
 
       <!-- 下一步發展 -->
       <rect x="92" y="1360" width="896" height="195" rx="24" fill="#F0FBF8"/>
       <text x="128" y="1410" fill="#3CA99A" font-size="28" font-weight="700">下一步發展</text>
-      \${textLines(devLines, 128, 1458, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      ${textLines(devLines, 128, 1458, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
       `;
     } else {
       // 2. 兩箱式版面 (主修解析多重並列 + 下一步發展，無副修)
@@ -181,12 +181,12 @@ module.exports = async function handler(req,res){
       <!-- 你的專屬解析 -->
       <rect x="92" y="850" width="896" height="465" rx="24" fill="#FFF7EC"/>
       <text x="128" y="900" fill="#FF6F91" font-size="28" font-weight="700">你的專屬解析</text>
-      \${textLines(mainLines, 128, 948, {size: fontSize, fill: "#4A3B78", lineHeight: lineHeight})}
+      ${textLines(mainLines, 128, 948, {size: fontSize, fill: "#4A3B78", lineHeight: lineHeight})}
 
       <!-- 下一步發展 -->
       <rect x="92" y="1335" width="896" height="220" rx="24" fill="#F0FBF8"/>
       <text x="128" y="1385" fill="#3CA99A" font-size="28" font-weight="700">下一步發展</text>
-      \${textLines(devLines, 128, 1435, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
+      ${textLines(devLines, 128, 1435, {size: 23, fill: "#4A3B78", lineHeight: 1.45})}
       `;
     }
 
@@ -200,11 +200,11 @@ module.exports = async function handler(req,res){
       <rect width="1080" height="1800" fill="url(#bg)"/>
       <rect x="46" y="42" width="988" height="1716" rx="52" fill="#FFFFFF" opacity="0.96"/>
       <text x="540" y="112" text-anchor="middle" fill="#7E7398" font-size="26" font-weight="700">五力陪跑系統｜教練天賦分析</text>
-      \${textLines([\`\${name} 的五力雷達圖\`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
+      ${textLines([`${name} 的五力雷達圖`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
       <rect x="220" y="205" width="640" height="68" rx="34" fill="url(#title)"/>
-      \${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
-      \${grid}\${axes}\${radar}\${labels}
-      \${contentSvg}
+      ${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
+      ${grid}${axes}${radar}${labels}
+      ${contentSvg}
       <!-- 頁尾品牌宣告 (取代舊 QR Code) -->
       <text x="540" y="1655" text-anchor="middle" fill="#5B2C82" font-size="22" font-weight="700">五力陪跑系統 ｜ 找到你的教練天賦</text>
       <text x="540" y="1695" text-anchor="middle" fill="#8F85A4" font-size="19">此圖呈現個人相對傾向，不代表能力高低</text>
