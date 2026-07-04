@@ -641,6 +641,6 @@ a {
 }
 
 /* Hide Notion Database Page Properties in subpages */
-.notion-page-properties {
+.notion-collection-page-properties {
   display: none !important;
 }
