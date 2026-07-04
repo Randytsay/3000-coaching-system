@@ -190,6 +190,16 @@ module.exports = async function handler(req,res){
       `;
     }
 
+    let badgeFontSize = 31;
+    if (primaryLabel.length > 30) {
+      badgeFontSize = 18;
+    } else if (primaryLabel.length > 20) {
+      badgeFontSize = 23;
+    } else if (primaryLabel.length > 12) {
+      badgeFontSize = 27;
+    }
+    const badgeTextY = 239 + badgeFontSize * 0.35;
+
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="1080" height="1800" viewBox="0 0 1080 1800" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -202,7 +212,7 @@ module.exports = async function handler(req,res){
       <text x="540" y="112" text-anchor="middle" fill="#7E7398" font-size="26" font-weight="700">五力陪跑系統｜教練天賦分析</text>
       ${textLines([`${name} 的五力雷達圖`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
       <rect x="220" y="205" width="640" height="68" rx="34" fill="url(#title)"/>
-      ${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
+      ${textLines([primaryLabel],540,badgeTextY,{size:badgeFontSize,fill:"#FFFFFF",weight:700,anchor:"middle"})}
       ${grid}${axes}${radar}${labels}
       ${contentSvg}
       <!-- 頁尾品牌宣告 (取代舊 QR Code) -->
