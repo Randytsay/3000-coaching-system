@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "五力教練學院",
   description: "五力教練學院第一版，承接公開內容、90 天陪跑 SOP 與教練養成路徑。",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.ico?v=2",
   },
 };
 

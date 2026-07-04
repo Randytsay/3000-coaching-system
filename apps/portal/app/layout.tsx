@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "姍謙大C｜五力教練系統",
   description: "姍謙大C 團隊入口，連接天賦測驗、五力教練學院與後續教練養成系統。",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.ico?v=2",
   },
 };
 
