@@ -295,23 +295,27 @@
   }
   .quiz-nav {
     display:flex;
-    justify-content:flex-start;
-    margin-top: 12px;
+    justify-content:center;
+    margin-top: 16px;
   }
   .prev-btn {
     appearance:none;
-    background:transparent;
-    border:none;
+    background:var(--c-lavender);
+    border:1.5px solid rgba(91,44,130,0.45);
     border-radius:999px;
-    color:var(--c-ink-soft);
+    box-shadow:0 3px 10px rgba(91,44,130,0.08);
+    color:var(--c-primary);
     cursor:pointer;
     font:inherit;
-    font-size:13px;
-    font-weight:650;
+    font-size:14px;
+    font-weight:700;
     min-height:44px;
-    padding:8px 12px;
+    min-width:160px;
+    padding:9px 18px;
+    transition:background 0.15s, border-color 0.15s, transform 0.15s;
   }
-  .prev-btn:hover { background:#f3eeff; color:var(--c-primary); }
+  .prev-btn:hover { background:#e9e0ff; border-color:var(--c-primary); }
+  .prev-btn:active { transform:scale(0.98); }
   .prev-btn:focus-visible { outline:3px solid rgba(184,156,255,0.4); outline-offset:2px; }
 
   /* ---------- 結果頁 ---------- */
@@ -541,7 +545,7 @@
     <div class="q-title" id="qTitle"></div>
     <div class="options" id="optionsWrap"></div>
     <div class="quiz-nav">
-      <button type="button" id="prevBtn" class="prev-btn" onclick="goPreviousQuestion()">← 上一題</button>
+      <button type="button" id="prevBtn" class="prev-btn" onclick="goPreviousQuestion()">← 修改上一題</button>
     </div>
   </div>
 
