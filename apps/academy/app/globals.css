@@ -1,13 +1,13 @@
 :root {
-  --bg: #fbf6f0;
-  --surface: #fffdf9;
-  --surface-soft: #f5ede0;
-  --ink: #1f2b29;
-  --muted: #5c6866;
-  --line: rgba(31, 43, 41, 0.1);
-  --gold: #8d6845;
-  --moss: #536458;
-  --clay: #a66a4a;
+  --bg: #FFF8FA;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-soft: #F6EEFF;
+  --ink: #3D2254;
+  --muted: #7C6094;
+  --line: rgba(74, 44, 106, 0.08);
+  --gold: #FF6F91;
+  --moss: #7FD8C5;
+  --clay: #B89CFF;
 }
 
 * {
@@ -16,9 +16,9 @@
 
 html {
   background:
-    radial-gradient(circle at top right, rgba(166, 106, 74, 0.18), transparent 30%),
-    radial-gradient(circle at bottom left, rgba(83, 100, 88, 0.16), transparent 28%),
-    linear-gradient(180deg, #fcf7f1 0%, #f2ebe1 100%);
+    radial-gradient(circle at top right, rgba(255, 111, 145, 0.15), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(184, 156, 255, 0.16), transparent 28%),
+    linear-gradient(180deg, #FFF9FA 0%, #F6EEFF 100%);
 }
 
 body {
