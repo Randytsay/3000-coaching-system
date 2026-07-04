@@ -36,7 +36,7 @@ export default async function AcademyHome() {
             <p className="eyebrow">Academy v1</p>
             <h1>{title}</h1>
             <p className="lede">
-              這個版本已經從靜態骨架切到 Notion 驅動。之後教練團在 Notion 共編、審核通過後，academy 前台就能承接同一份內容。
+              這個版本已經從靜態骨架切換到 Notion 驅動。之後教練團在 Notion 共編、審核通過後，academy 前台就能承接同一份內容。
             </p>
           </div>
           <aside className="hero-note">

@@ -8,6 +8,11 @@
   --gold: #FF6F91;
   --moss: #7FD8C5;
   --clay: #B89CFF;
+  
+  /* Navigation & button brand variables */
+  --primary: #FF6F91;
+  --primary-hover: #FF8AAE;
+  --shadow: rgba(142, 106, 175, 0.06);
 }
 
 * {
@@ -30,6 +35,7 @@ body {
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 .academy-shell {
