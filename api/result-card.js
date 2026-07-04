@@ -9,12 +9,24 @@ const TYPE_DATA = [
   {key:"D", name:"招募力", coach:"招募教練", color:"#A685E2"},
   {key:"E", name:"自媒體力", coach:"自媒體/IP教練", color:"#5B9BD5"}
 ];
-const STRENGTHS = {
-  A:"你能創造安全感，讓人願意說出真正的需要。",
-  B:"你能把複雜變簡單，幫助夥伴清楚採取下一步。",
-  C:"你能以真實體驗建立信任，將產品價值說得具體。",
-  D:"你能點燃希望與行動，陪人勇敢跨出舒適圈。",
-  E:"你能把價值說成有共鳴的故事，讓更多人看見。"
+const SINGLE_ANALYSES = {
+  A:"你的天賦，是讓人安心。你可能不是團隊裡最會演講的人，也不是最會成交的人，但你很容易讓人願意敞開心房。當新人遇到挫折時，你的陪伴和傾聽，往往比答案更有力量。",
+  B:"你的天賦，是把複雜變簡單。你擅長整理流程、解決問題，讓別人更快上手。團隊因為有你，很多事情都變得更有效率。",
+  C:"你的天賦，是用真實經驗創造信任。你喜歡分享產品帶來的改變，也願意用心經營顧客關係。你的影響力，來自每一個真誠的見證與服務。",
+  D:"你的天賦，是點燃希望。你擅長建立信任，也善於把機會分享得自然真誠。你不是在說服別人，而是在幫助別人看見更多可能。",
+  E:"你的天賦，是讓價值被更多人看見。你對內容創作、說故事、經營個人品牌充滿興趣，也樂於嘗試新的表達方式。你不只是分享，而是在幫助團隊被更多人認識。"
+};
+const DUAL_ANALYSES = {
+  AB:"組合優勢｜你既能讓人安心，也能把複雜的事情拆解清楚；別人不只願意相信你，也知道下一步怎麼做。\n最適合｜新人啟動、一對一陪跑與流程教學，先理解卡點，再給出剛剛好的工具。\n留意｜不要太快替對方解決一切；保留空間讓他自己練習，才能真正建立能力。",
+  AC:"組合優勢｜你擅長以關心建立信任，再用真實的產品經驗回應需求，讓分享自然、不像推銷。\n最適合｜顧客關係經營、產品體驗追蹤與生活型健康陪伴，把一次購買發展成長期信任。\n留意｜別因為怕造成壓力而只陪伴、不提出清楚建議；溫柔也可以很有方向。",
+  AD:"組合優勢｜你能先接住一個人的不安，再幫他看見可能性並鼓起勇氣行動，是兼具溫度與推進力的教練。\n最適合｜陪伴猶豫中的新人、邀約前演練與低潮重啟，讓對方感到被理解又願意跨出一步。\n留意｜分清楚鼓勵與施壓；用提問確認那一步是對方真正想走的，而不是替他決定。",
+  AE:"組合優勢｜你能聽見人的真實故事，也懂得把其中的價值轉化成有共鳴的內容，讓信任自然擴散。\n最適合｜人物故事、社群互動、見證內容與個人品牌定位，讓鏡頭前後都保有真誠。\n留意｜分享前先尊重隱私與界線；不要只追求感動或流量，長期一致比偶爾爆紅更重要。",
+  BC:"組合優勢｜你兼具產品經驗與系統思維，能把『為什麼有效』整理成別人容易理解、容易照做的方法。\n最適合｜產品教學、體驗流程、顧客追蹤 SOP 與新人零售訓練，提升團隊服務的一致性。\n留意｜避免資訊一次給太多；先抓住對方當下最需要的一件事，再逐步補充細節。",
+  BD:"組合優勢｜你不只會點燃行動，也能把行動變成可複製的步驟，讓熱情不會停在口號。\n最適合｜新人啟動、邀約流程、團隊挑戰與招募訓練，把目標拆成每天做得到的任務。\n留意｜不要只看速度和完成率；不同的人需要不同節奏，流程應該服務人，而不是綁住人。",
+  BE:"組合優勢｜你能把工具、流程與內容創作結合，將一次靈感整理成穩定產出的系統，是團隊的內容效率引擎。\n最適合｜內容 SOP、AI 工具導入、素材管理與社群排程，幫助夥伴更輕鬆地持續曝光。\n留意｜別為了最佳化而失去人味；工具應放大真實觀點，而不是製造大量相似內容。",
+  CD:"組合優勢｜你能從真實產品價值建立信任，再自然地帶人看見事業機會，讓零售與招募彼此支撐。\n最適合｜從顧客到夥伴的培育、產品故事分享與商機說明，讓機會建立在實際體驗之上。\n留意｜不要把每位顧客都當成招募對象；先尊重他的需求與意願，關係才走得長久。",
+  CE:"組合優勢｜你擅長把產品體驗轉化成清楚、有畫面的內容，讓看不見的價值被更多人理解。\n最適合｜產品實測、生活情境短影音、顧客故事與教育型內容，用真實細節累積可信度。\n留意｜避免誇大效果或只呈現完美結果；清楚標示個人經驗並遵守產品宣稱規範。",
+  DE:"組合優勢｜你同時具備號召力與傳播力，能把願景說得令人想參與，並透過內容快速放大影響。\n最適合｜招募活動、直播、短影音企劃與團隊品牌造勢，將線上關注轉化為真實行動。\n留意｜避免只追求聲量與情緒高點；承諾之後要有清楚跟進，影響力才會沉澱成信任。"
 };
 const DEVELOPMENT = {
   A:"練習先傾聽與復述感受，再提出你的建議。",
@@ -36,7 +48,11 @@ function wrapText(text, maxChars){
   return lines;
 }
 
-function point(index, factor, cx=540, cy=570, radius=245){
+function wrapParagraphs(text, maxChars){
+  return String(text).split("\n").flatMap(paragraph=>wrapText(paragraph,maxChars));
+}
+
+function point(index, factor, cx=540, cy=590, radius=210){
   const angle = (-90 + index * 72) * Math.PI / 180;
   return [cx + Math.cos(angle)*radius*factor, cy + Math.sin(angle)*radius*factor];
 }
@@ -61,9 +77,12 @@ module.exports = async function handler(req,res){
     const candidates = scores.map((score,index)=>({score,index})).filter(item=>!primaryIndexes.includes(item.index));
     const minScore = candidates.length ? Math.min(...candidates.map(item=>item.score)) : null;
     const developmentIndex = minScore === null ? null : candidates.find(item=>item.score===minScore).index;
-    const strengthText = primaryIndexes.length <= 2
-      ? primaryIndexes.map(index=>STRENGTHS[TYPE_DATA[index].key]).join(" ")
-      : "你的五力分布多元，能依不同情境切換合適的教練角色。";
+    const primaryKeys = primaryIndexes.map(index=>TYPE_DATA[index].key);
+    const analysisText = primaryIndexes.length === 1
+      ? SINGLE_ANALYSES[primaryKeys[0]]
+      : primaryIndexes.length === 2
+        ? DUAL_ANALYSES[[...primaryKeys].sort().join("")]
+        : `你的最高分由 ${primaryIndexes.map(index=>TYPE_DATA[index].coach).join("、")} 並列，這些都是你的主修天賦。你擁有跨領域的帶人能力，可以依不同情境切換最適合的角色。`;
     const developmentText = developmentIndex === null
       ? "你的五力相當均衡，可以依團隊需要選擇一項深入發展。"
       : DEVELOPMENT[TYPE_DATA[developmentIndex].key];
@@ -74,44 +93,50 @@ module.exports = async function handler(req,res){
     }).join("");
     const axes = TYPE_DATA.map((_,i)=>{
       const [x,y]=point(i,1);
-      return `<line x1="540" y1="570" x2="${x}" y2="${y}" stroke="#E4DDEB" stroke-width="2"/>`;
+      return `<line x1="540" y1="590" x2="${x}" y2="${y}" stroke="#E4DDEB" stroke-width="2"/>`;
     }).join("");
     const dataPoints = scores.map((score,i)=>point(i,score/maxScore));
     const radar = `<polygon points="${dataPoints.map(p=>p.join(",")).join(" ")}" fill="#5B2C8230" stroke="#5B2C82" stroke-width="7" stroke-linejoin="round"/>`+
       dataPoints.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="11" fill="${TYPE_DATA[i].color}" stroke="#FFF" stroke-width="5"/>`).join("");
+    const labelPositions = [
+      {x:540,y:338,anchor:"middle"},
+      {x:802,y:505,anchor:"start"},
+      {x:764,y:810,anchor:"start"},
+      {x:316,y:810,anchor:"end"},
+      {x:278,y:505,anchor:"end"}
+    ];
     const labels = TYPE_DATA.map((type,i)=>{
-      const [x,y]=point(i,1.28);
-      const anchor=x<500?"end":x>580?"start":"middle";
-      return textLines([`${type.name} ${scores[i]}`],x,y,{size:27,fill:"#4A3B78",weight:700,anchor});
+      const {x,y,anchor}=labelPositions[i];
+      return textLines([`${type.name} ${scores[i]}`],x,y,{size:28,fill:"#4A3B78",weight:700,anchor});
     }).join("");
     const qrDataUrl = await QRCode.toDataURL(LIFF_URL,{width:180,margin:1,color:{dark:"#5B2C82",light:"#FFFFFF"}});
     const qrBase64 = qrDataUrl.split(",")[1];
-    const strengthLines = wrapText(strengthText,24).slice(0,3);
-    const developmentLines = wrapText(developmentText,24).slice(0,3);
+    const analysisLines = wrapParagraphs(analysisText,31).slice(0,12);
+    const developmentLines = wrapText(developmentText,31).slice(0,3);
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
-    <svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg">
+    <svg width="1080" height="1800" viewBox="0 0 1080 1800" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF7EC"/><stop offset="1" stop-color="#F3EEFF"/></linearGradient>
         <linearGradient id="title" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5B2C82"/><stop offset="1" stop-color="#FF6F91"/></linearGradient>
         <style>text{font-family:'Noto Sans CJK TC',sans-serif}</style>
       </defs>
-      <rect width="1080" height="1350" fill="url(#bg)"/>
-      <rect x="46" y="42" width="988" height="1266" rx="52" fill="#FFFFFF" opacity="0.96"/>
+      <rect width="1080" height="1800" fill="url(#bg)"/>
+      <rect x="46" y="42" width="988" height="1716" rx="52" fill="#FFFFFF" opacity="0.96"/>
       <text x="540" y="112" text-anchor="middle" fill="#7E7398" font-size="26" font-weight="700">五力陪跑系統｜教練天賦分析</text>
       ${textLines([`${name} 的五力雷達圖`],540,175,{size:48,fill:"#5B2C82",weight:700,anchor:"middle"})}
       <rect x="220" y="205" width="640" height="68" rx="34" fill="url(#title)"/>
       ${textLines([primaryLabel],540,250,{size:31,fill:"#FFFFFF",weight:700,anchor:"middle"})}
       ${grid}${axes}${radar}${labels}
-      <rect x="92" y="875" width="896" height="158" rx="28" fill="#FFF7EC"/>
-      <text x="128" y="924" fill="#FF6F91" font-size="29" font-weight="700">你的自然優勢</text>
-      ${textLines(strengthLines,128,971,{size:27,fill:"#4A3B78",lineHeight:1.45})}
-      <rect x="92" y="1057" width="896" height="154" rx="28" fill="#F0FBF8"/>
-      <text x="128" y="1106" fill="#3CA99A" font-size="29" font-weight="700">下一步發展</text>
-      ${textLines(developmentLines,128,1153,{size:27,fill:"#4A3B78",lineHeight:1.45})}
-      <image href="data:image/png;base64,${qrBase64}" x="824" y="1130" width="132" height="132"/>
-      <text x="92" y="1264" fill="#8F85A4" font-size="20">此圖呈現個人相對傾向，不代表能力高低</text>
-      <text x="92" y="1294" fill="#8F85A4" font-size="20">掃描 QR Code，找到你的教練天賦</text>
+      <rect x="92" y="872" width="896" height="500" rx="28" fill="#FFF7EC"/>
+      <text x="128" y="925" fill="#FF6F91" font-size="29" font-weight="700">你的專屬解析</text>
+      ${textLines(analysisLines,128,978,{size:27,fill:"#4A3B78",lineHeight:1.5})}
+      <rect x="92" y="1396" width="896" height="178" rx="28" fill="#F0FBF8"/>
+      <text x="128" y="1449" fill="#3CA99A" font-size="29" font-weight="700">下一步發展</text>
+      ${textLines(developmentLines,128,1502,{size:27,fill:"#4A3B78",lineHeight:1.45})}
+      <image href="data:image/png;base64,${qrBase64}" x="824" y="1600" width="126" height="126"/>
+      <text x="92" y="1662" fill="#8F85A4" font-size="20">此圖呈現個人相對傾向，不代表能力高低</text>
+      <text x="92" y="1696" fill="#8F85A4" font-size="20">掃描 QR Code，找到你的教練天賦</text>
     </svg>`;
 
     const fontPath = path.join(process.cwd(),"assets","fonts","NotoSansCJKtc-Regular.otf");

@@ -1194,7 +1194,7 @@ function renderDevelopment(primaryKeys){
 
 function getResultCardUrl(){
   const url = new URL("/api/result-card", location.origin);
-  url.searchParams.set("v", "2");
+  url.searchParams.set("v", "3");
   url.searchParams.set("name", userName.trim().slice(0,30));
   url.searchParams.set("scores", optKeys.map(key=>scores[key]).join(","));
   return url.href;
