@@ -1233,13 +1233,31 @@ function getResultCardUrl(){
   return url.href;
 }
 
-function updateResultCardPreview(){
+async function updateResultCardPreview(){
   currentCardUrl = getResultCardUrl();
   const preview = document.getElementById("resultCardPreview");
-  preview.src = currentCardUrl;
-  preview.onerror = ()=>{
-    document.getElementById("shareStatus").textContent = "成果圖暫時無法載入，請稍後再試。";
-  };
+  
+  // 開始生成圖片時顯示提示
+  setShareStatus("正在生成個人天賦成果圖卡 (首載約需 3-5 秒)...");
+  
+  try {
+    // 預先 Fetch 卡片圖檔為 Blob 並快取為本地 URL
+    const response = await fetch(currentCardUrl);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    
+    if (localCardBlobUrl) {
+      URL.revokeObjectURL(localCardBlobUrl);
+    }
+    localCardBlobUrl = URL.createObjectURL(blob);
+    
+    preview.src = localCardBlobUrl;
+    setShareStatus("✓ 成果圖卡生成成功，已開放下載與分享");
+  } catch (error) {
+    console.error("生成圖卡快取失敗", error);
+    preview.src = currentCardUrl; // 降級使用原始 API 連結
+    setShareStatus("⚠️ 圖卡載入較慢，您仍可直接分享或長按下方圖片儲存");
+  }
 }
 
 function getCombinedTieDescription(primaryKeys) {
@@ -1421,7 +1439,8 @@ async function shareToLine(){
 }
 
 async function fetchResultCardFile(){
-  const response = await fetch(currentCardUrl);
+  const targetUrl = localCardBlobUrl || currentCardUrl;
+  const response = await fetch(targetUrl);
   if(!response.ok) throw new Error(`HTTP ${response.status}`);
   const blob = await response.blob();
   const safeName = (userName.trim() || "我的").replace(/[\\/:*?"<>|]/g,"_");
@@ -1453,17 +1472,16 @@ async function downloadResultCard(){
     openImageModal();
     return;
   }
-  setShareStatus("正在準備下載…");
+  setShareStatus("正在下載成果圖…");
   try {
-    const file = await fetchResultCardFile();
-    const objectUrl = URL.createObjectURL(file);
+    const downloadUrl = localCardBlobUrl || currentCardUrl;
+    const safeName = (userName.trim() || "我的").replace(/[\\/:*?"<>|]/g,"_");
     const link = document.createElement("a");
-    link.href = objectUrl;
-    link.download = file.name;
+    link.href = downloadUrl;
+    link.download = `${safeName}-五力教練天賦.png`;
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
     setShareStatus("✓ 成果圖已開始下載");
   } catch(error){
     console.error("下載成果圖失敗", error);
@@ -1472,30 +1490,10 @@ async function downloadResultCard(){
   }
 }
 
-async function prepareLocalCardUrl() {
-  if (localCardBlobUrl) return localCardBlobUrl;
-  try {
-    const file = await fetchResultCardFile();
-    localCardBlobUrl = URL.createObjectURL(file);
-    return localCardBlobUrl;
-  } catch (e) {
-    console.error("無法快取圖片，改用遠端連結", e);
-    return currentCardUrl;
-  }
-}
-
-async function openImageModal(){
-  setShareStatus("正在載入成果圖...");
-  try {
-    const srcUrl = await prepareLocalCardUrl();
-    document.getElementById("imageModalPreview").src = srcUrl;
-    document.getElementById("imageModal").classList.add("open");
-    setShareStatus("");
-  } catch (error) {
-    document.getElementById("imageModalPreview").src = currentCardUrl;
-    document.getElementById("imageModal").classList.add("open");
-    setShareStatus("載入失敗，已使用遠端圖檔");
-  }
+function openImageModal(){
+  const srcUrl = localCardBlobUrl || currentCardUrl;
+  document.getElementById("imageModalPreview").src = srcUrl;
+  document.getElementById("imageModal").classList.add("open");
 }
 
 function closeImageModal(){
@@ -1503,10 +1501,11 @@ function closeImageModal(){
 }
 
 function openCardExternally(){
+  const targetUrl = localCardBlobUrl || currentCardUrl;
   if(liffReady && liff.isInClient()){
-    liff.openWindow({url:currentCardUrl,external:true});
+    liff.openWindow({url:targetUrl,external:true});
   } else {
-    window.open(currentCardUrl,"_blank","noopener");
+    window.open(targetUrl,"_blank","noopener");
   }
 }
 
@@ -1609,7 +1608,7 @@ async function submitResult(){
   const timeoutId = setTimeout(() => controller.abort(), 15000);
   isSubmitting = true;
   submitBtn.disabled = true;
-  statusEl.textContent = "傳送中...";
+  statusEl.textContent = "分析中...";
   try {
     await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
       method: "POST",
