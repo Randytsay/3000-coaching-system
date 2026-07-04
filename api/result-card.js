@@ -89,10 +89,9 @@ module.exports = async function handler(req,res){
         primaryIndexes.map(index => {
           const key = TYPE_DATA[index].key;
           const name = TYPE_DATA[index].coach;
-          const desc = SINGLE_ANALYSES[key].split(/[。！]/)[0] + "。";
+          const desc = SINGLE_ANALYSES[key];
           return `【${name}】${desc}`;
-        }).join("\n") +
-        `\n建議你可配合新人的階段切換最適合的引導角色。`;
+        }).join("\n");
     }
     const developmentText = developmentIndex === null
       ? "你的五力相當均衡，可以依團隊需要選擇一項深入發展。"
@@ -122,8 +121,28 @@ module.exports = async function handler(req,res){
     }).join("");
     const qrDataUrl = await QRCode.toDataURL(LIFF_URL,{width:180,margin:1,color:{dark:"#5B2C82",light:"#FFFFFF"}});
     const qrBase64 = qrDataUrl.split(",")[1];
-    const analysisLines = wrapParagraphs(analysisText,31).slice(0,12);
-    const developmentLines = wrapText(developmentText,31).slice(0,3);
+
+    // 依據字數動態調整成果圖卡上的解析文字字體大小與排版，確保完整文字可以塞下不溢出
+    const charCount = analysisText.length;
+    let fontSize = 27;
+    let lineHeight = 1.45;
+    let charsPerLine = 31;
+    let maxLines = 12;
+
+    if (charCount > 180) {
+      fontSize = 18;
+      lineHeight = 1.35;
+      charsPerLine = 47;
+      maxLines = 18;
+    } else if (charCount > 100) {
+      fontSize = 22;
+      lineHeight = 1.4;
+      charsPerLine = 38;
+      maxLines = 14;
+    }
+
+    const analysisLines = wrapParagraphs(analysisText, charsPerLine).slice(0, maxLines);
+    const developmentLines = wrapText(developmentText, 31).slice(0, 3);
 
     const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <svg width="1080" height="1800" viewBox="0 0 1080 1800" xmlns="http://www.w3.org/2000/svg">
@@ -141,7 +160,7 @@ module.exports = async function handler(req,res){
       ${grid}${axes}${radar}${labels}
       <rect x="92" y="872" width="896" height="500" rx="28" fill="#FFF7EC"/>
       <text x="128" y="925" fill="#FF6F91" font-size="29" font-weight="700">你的專屬解析</text>
-      ${textLines(analysisLines,128,978,{size:27,fill:"#4A3B78",lineHeight:1.5})}
+      ${textLines(analysisLines,128,978,{size:fontSize,fill:"#4A3B78",lineHeight:lineHeight})}
       <rect x="92" y="1396" width="896" height="178" rx="28" fill="#F0FBF8"/>
       <text x="128" y="1449" fill="#3CA99A" font-size="29" font-weight="700">下一步發展</text>
       ${textLines(developmentLines,128,1502,{size:27,fill:"#4A3B78",lineHeight:1.45})}

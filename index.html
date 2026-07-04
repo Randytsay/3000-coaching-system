@@ -1270,8 +1270,7 @@ function getCombinedTieDescription(primaryKeys) {
   const intro = `你同時並列了 ${names} 的主修天賦！這代表你是一位「多元全能型陪跑者」，在團隊中具備高度靈活性：\n\n`;
   const bullets = primaryKeys.map(k => {
     const t = types[k];
-    const firstSentence = t.desc.split(/[。！]/)[0] + "。";
-    return `${t.emoji} 【${t.name}】${firstSentence}`;
+    return `${t.emoji} 【${t.name}】${t.desc}`;
   }).join("\n");
   const advice = `\n\n💡 建議：你擁有跨領域的帶人能力，能配合新人的不同階段切換最適合的引導角色。在實習階段，您可以挑選其中最熟悉的一項作為主攻方向。`;
   return intro + bullets + advice;
