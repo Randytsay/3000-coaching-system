@@ -48,7 +48,7 @@ function textLines(lines, x, y, options={}){
 
 module.exports = async function handler(req,res){
   try {
-    if(req.method !== "GET") return res.status(405).json({error:"Method not allowed"});
+    if(!["GET","HEAD"].includes(req.method)) return res.status(405).json({error:"Method not allowed"});
     const name = String(req.query.name || "我的").trim().slice(0,30) || "我的";
     const scores = String(req.query.scores || "").split(",").map(Number);
     if(scores.length !== 5 || scores.some(score=>!Number.isInteger(score) || score<0 || score>20) || scores.reduce((a,b)=>a+b,0)!==20){
@@ -124,6 +124,7 @@ module.exports = async function handler(req,res){
     res.setHeader("Content-Disposition",`inline; filename*=UTF-8''${encodeURIComponent(`${name}-五力教練天賦.png`)}`);
     res.setHeader("Cache-Control","public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800");
     res.setHeader("Access-Control-Allow-Origin","*");
+    if(req.method === "HEAD") return res.status(200).end();
     return res.status(200).send(png);
   } catch(error){
     console.error(error);
