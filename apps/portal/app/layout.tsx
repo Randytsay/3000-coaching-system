@@ -17,6 +17,9 @@ const body = Noto_Sans_TC({
 export const metadata: Metadata = {
   title: "SANQ｜五力教練系統",
   description: "SANQ 團隊入口，連接天賦測驗、五力教練學院與後續教練養成系統。",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
