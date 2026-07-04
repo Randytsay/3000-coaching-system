@@ -1501,7 +1501,8 @@ function closeImageModal(){
 }
 
 function openCardExternally(){
-  const targetUrl = localCardBlobUrl || currentCardUrl;
+  // 必須使用遠端 HTTPS 網址，因為外部瀏覽器無法讀取 LIFF 記憶體中的 Blob URL
+  const targetUrl = currentCardUrl;
   if(liffReady && liff.isInClient()){
     liff.openWindow({url:targetUrl,external:true});
   } else {
