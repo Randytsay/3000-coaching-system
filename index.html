@@ -983,6 +983,15 @@ async function initLiffIntegration(){
   try {
     await liff.init({liffId: LIFF_ID});
     liffReady = true;
+    
+    // 如果偵測到在 LINE 內置瀏覽器開啟，但並非處於 LIFF App 環境下，
+    // 則自動重定向至官方 LIFF 連結，以強制在 LIFF 容器中開啟，避免 login 頁面被 blocked
+    if (!liff.isInClient() && /Line\//i.test(navigator.userAgent)) {
+      console.log("偵測到在 LINE 內置瀏覽器但非 LIFF 環境，正在重定向至官方 LIFF...");
+      window.location.replace(LIFF_URL);
+      return;
+    }
+
     if(liff.isInClient() && liff.isLoggedIn()){
       lineProfile = await liff.getProfile();
       const input = document.getElementById("userName");
