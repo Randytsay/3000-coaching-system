@@ -15,8 +15,8 @@ const body = Noto_Sans_TC({
 });
 
 export const metadata: Metadata = {
-  title: "SANQ｜五力教練系統",
-  description: "SANQ 團隊入口，連接天賦測驗、五力教練學院與後續教練養成系統。",
+  title: "姍謙大C｜五力教練系統",
+  description: "姍謙大C 團隊入口，連接天賦測驗、五力教練學院與後續教練養成系統。",
   icons: {
     icon: "/favicon.ico",
   },
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="site-header">
           <div className="nav-container">
             <a href="https://sanq.ccwu.cc" className="logo">
-              <span className="logo-sparkle">✨</span> SANQ 五力教練系統
+              <span className="logo-sparkle">✨</span> 姍謙大C 五力教練系統
             </a>
             <nav className="nav-links">
               <a href="https://sanq.ccwu.cc" className="nav-item">🏠 首頁</a>

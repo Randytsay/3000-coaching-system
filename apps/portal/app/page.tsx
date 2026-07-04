@@ -63,7 +63,7 @@ export default function PortalHome() {
     <main className="portal-shell">
       <div className="hero-wrapper">
         <section className="hero">
-          <p className="eyebrow">✨ SANQ Coaching System</p>
+          <p className="eyebrow">✨ 姍謙大C 教練系統</p>
           <h1>讓帶人與陪跑，<br/>變成輕鬆好複製的教練系統</h1>
           <p className="lede">
             專為新世代教練打造的陪跑支持系統。在這裡，你可以一鍵檢測個人天賦、翻閱實戰學院指南，用最溫柔且系統化的方式引導夥伴成長。
