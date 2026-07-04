@@ -639,3 +639,8 @@ a {
     font-size: 0.9rem;
   }
 }
+
+/* Hide Notion Database Page Properties in subpages */
+.notion-page-properties {
+  display: none !important;
+}
