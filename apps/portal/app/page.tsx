@@ -79,43 +79,11 @@ export default function PortalHome() {
           </div>
         </section>
         
-        {/* Right side cute vector illustration */}
         <section className="hero-art">
-          <svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" className="floating-element">
-            {/* Cute cloud background */}
-            <path d="M60 170c-10 0-18-8-18-18s8-18 18-18h160c10 0 18 8 18 18s-8 18-18 18H60z" fill="#FFF0F5" opacity="0.8" />
-            <path d="M100 130c-8 0-15-7-15-15s7-15 15-15h80c8 0 15 7 15 15s-7 15-15 15h-80z" fill="#F0F8FF" opacity="0.9" />
-
-            {/* Radar polygon shape representation */}
-            <polygon points="140,40 210,90 190,165 90,165 70,90" fill="rgba(184, 156, 255, 0.2)" stroke="#B89CFF" strokeWidth="4" strokeLinejoin="round" />
-            <polygon points="140,70 185,100 175,150 105,150 95,100" fill="rgba(255, 111, 145, 0.25)" stroke="#FF6F91" strokeWidth="4" strokeLinejoin="round" />
-
-            {/* Glowing dots */}
-            <circle cx="140" cy="70" r="7" fill="#FF6F91" stroke="#FFFFFF" strokeWidth="2.5" />
-            <circle cx="185" cy="100" r="7" fill="#7FD8C5" stroke="#FFFFFF" strokeWidth="2.5" />
-            <circle cx="175" cy="150" r="7" fill="#FFB37A" stroke="#FFFFFF" strokeWidth="2.5" />
-            <circle cx="105" cy="150" r="7" fill="#B89CFF" stroke="#FFFFFF" strokeWidth="2.5" />
-            <circle cx="95" cy="100" r="7" fill="#5B9BD5" stroke="#FFFFFF" strokeWidth="2.5" />
-
-            {/* Cute smiley character face sitting on the radar */}
-            <g transform="translate(115, 95)" className="floating-element-delay">
-              {/* Head */}
-              <circle cx="25" cy="25" r="28" fill="#FFFFFF" stroke="#3D2254" strokeWidth="4" />
-              {/* Happy eyes */}
-              <path d="M15 22c1-2 4-2 5 0M30 22c1-2 4-2 5 0" stroke="#3D2254" strokeWidth="3" strokeLinecap="round" />
-              {/* Smiling mouth */}
-              <path d="M21 30c3 2 5 2 8 0" stroke="#3D2254" strokeWidth="3" strokeLinecap="round" />
-              {/* Blushing cheeks */}
-              <circle cx="11" cy="26" r="4" fill="#FF8AAE" opacity="0.8" />
-              <circle cx="39" cy="26" r="4" fill="#FF8AAE" opacity="0.8" />
-            </g>
-
-            {/* Sparkles */}
-            <path d="M40 70l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFB37A" />
-            <path d="M230 160l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z" fill="#7FD8C5" />
-            <path d="M240 60l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FF6F91" />
-            <path d="M50 180l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z" fill="#B89CFF" />
-          </svg>
+          <div className="garden-frame floating-element">
+            <img src="/five-strengths-garden.webp" alt="五位象徵不同教練天賦的小種子，一起在花園裡閱讀與成長" />
+            <span className="art-caption">五種天賦，一起長成一座花園</span>
+          </div>
         </section>
       </div>
 

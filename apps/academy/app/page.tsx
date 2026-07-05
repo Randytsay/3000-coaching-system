@@ -32,18 +32,20 @@ export default async function AcademyHome() {
     return (
       <main className="academy-shell">
         <section className="academy-hero">
-          <div>
-            <p className="eyebrow">Academy v1</p>
+          <div className="academy-hero-copy">
+            <p className="eyebrow">五力教練學院 · 一起把陪跑做好</p>
             <h1>{title}</h1>
             <p className="lede">
-              這個版本已經從靜態骨架切換到 Notion 驅動。之後教練團在 Notion 共編、審核通過後，academy 前台就能承接同一份內容。
+              每一種天賦都有自己的位置。從認識自己、練習陪伴，到帶著下一位夥伴成長，這裡收藏了可以一步一步照著走的教練地圖。
             </p>
+            <div className="hero-pills" aria-label="學院特色">
+              <span>🌱 從天賦出發</span><span>🧭 有路徑可循</span><span>🤝 有夥伴同行</span>
+            </div>
           </div>
-          <aside className="hero-note">
-            <span>內容流程</span>
-            <strong>Notion 共編 → Academy 公開</strong>
-            <p>你現在看到的是品牌化包裝後的前台，不是原生 Notion 介面。</p>
-          </aside>
+          <figure className="academy-garden">
+            <img src="/five-strengths-garden.webp" alt="五力種子夥伴在學習花園裡一起閱讀與成長" />
+            <figcaption>每一力都不同，合在一起才完整。</figcaption>
+          </figure>
         </section>
 
         <section className="highlight-row">
@@ -91,8 +93,9 @@ export default async function AcademyHome() {
             <h2>每一力都有自己的定位與陪跑方式。</h2>
           </div>
           <div className="power-grid">
-            {homepage.powers.map((power) => (
-              <a key={power.pageId} className="power-link-card" href={power.href}>
+            {homepage.powers.map((power, index) => (
+              <a key={power.pageId} className={`power-link-card power-${index % 5}`} href={power.href}>
+                <span className="power-flower" aria-hidden="true">✿</span>
                 <h3>{power.title}</h3>
                 <p>{power.description}</p>
               </a>
