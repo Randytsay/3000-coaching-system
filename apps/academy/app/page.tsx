@@ -1,33 +1,29 @@
-import { AcademyNotionPage } from "../components/notion-page";
-import { NotionConnectionState } from "../components/notion-connection-state";
-import {
-  getAcademyHomepageData,
-  getAcademyRootPageId,
-  getPageRecordMap,
-  getRendererPageTitle,
-} from "../lib/notion";
+import { getAcademyHomepageData, getAcademyRootPageId, getPageRecordMap, getRendererPageTitle } from "../lib/notion";
 
 export const revalidate = 300;
 
-const highlights = [
-  "五力是分工架構，不是人格標籤。",
-  "問卷只做探索，不直接當成認證。",
-  "公開站顯示已審核內容，個資與個案留在內部。",
+const principles = [
+  { icon: "🧩", title: "找到適合的位置", copy: "五力幫你看見較自然的起點，不是把人貼上標籤。" },
+  { icon: "🌱", title: "邊做邊長出能力", copy: "先從小任務開始，在實作、回饋與陪伴中慢慢變熟練。" },
+  { icon: "🤝", title: "不是一個人硬撐", copy: "遇到問題有人接力，教練也有督導與團隊支持。" },
 ];
+
+const journey = [
+  { days: "Day 1–30", icon: "🧭", title: "探索與啟動", copy: "完成五力探索、認識自己的優勢，選一個最小任務開始練習。", action: "我現在要做：完成測驗與第一次對談" },
+  { days: "Day 31–60", icon: "👟", title: "練習與陪跑", copy: "跟著專項教練實作，在真實情境中練習並取得具體回饋。", action: "我現在要做：每週實作、回報與修正" },
+  { days: "Day 61–90", icon: "🏮", title: "穩定與傳承", copy: "整理自己的方法，完成一次帶領或分享，準備陪伴下一位夥伴。", action: "我現在要做：完成成果與下一階段計畫" },
+];
+
+const roleIcons = ["🌼", "🌱", "🌳", "🧭"];
 
 export default async function AcademyHome() {
   const rootPageId = getAcademyRootPageId();
 
   try {
-    const [recordMap, homepage] = await Promise.all([
-      getPageRecordMap(rootPageId),
-      getAcademyHomepageData(),
-    ]);
+    const [recordMap, homepage] = await Promise.all([getPageRecordMap(rootPageId), getAcademyHomepageData()]);
     const title = getRendererPageTitle(recordMap);
     const publicSops = homepage.sopItems.filter((item) => item.websitePublic);
-    const pendingSops = homepage.sopItems.filter((item) => !item.websitePublic);
     const publicResources = homepage.resourceItems.filter((item) => item.websitePublic && !item.containsPersonalData);
-    const internalResources = homepage.resourceItems.filter((item) => !item.websitePublic);
 
     return (
       <main className="academy-shell">
@@ -35,11 +31,10 @@ export default async function AcademyHome() {
           <div className="academy-hero-copy">
             <p className="eyebrow">五力教練學院 · 一起把陪跑做好</p>
             <h1>{title}</h1>
-            <p className="lede">
-              每一種天賦都有自己的位置。從認識自己、練習陪伴，到帶著下一位夥伴成長，這裡收藏了可以一步一步照著走的教練地圖。
-            </p>
-            <div className="hero-pills" aria-label="學院特色">
-              <span>🌱 從天賦出發</span><span>🧭 有路徑可循</span><span>🤝 有夥伴同行</span>
+            <p className="lede">不論你是剛加入的夥伴，或正在學習帶人的教練，這裡會告訴你：現在在哪裡、下一步做什麼，以及需要誰來陪你。</p>
+            <div className="hero-actions">
+              <a className="primary-action" href="#start">找到我的下一步</a>
+              <a className="text-action" href="https://quiz.sanq.ccwu.cc">先做五力測驗 <span>→</span></a>
             </div>
           </div>
           <figure className="academy-garden">
@@ -48,168 +43,70 @@ export default async function AcademyHome() {
           </figure>
         </section>
 
-        <section className="highlight-row">
-          {highlights.map((item) => (
-            <article key={item} className="highlight-card">
-              <span className="highlight-mark" />
-              <p>{item}</p>
-            </article>
-          ))}
+        <section className="principle-row" aria-label="計畫核心觀念">
+          {principles.map((item) => <article key={item.title} className="principle-card"><span>{item.icon}</span><div><h2>{item.title}</h2><p>{item.copy}</p></div></article>)}
         </section>
 
-        <section className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">首頁導覽</p>
-            <h2>先把整體結構看懂，再進入各區細讀。</h2>
+        <section id="start" className="section-block start-section">
+          <div className="section-heading centered-heading">
+            <p className="eyebrow">Start Here</p>
+            <h2>你現在是哪一種角色？</h2>
+            <p>不用一次讀完整個網站。先找到自己的身分，只看此刻真正需要的內容。</p>
           </div>
-          <div className="nav-grid">
-            {homepage.rootLinks.map((item) => (
-              <a key={item.pageId} className="nav-card" href={item.href}>
-                <h3>{item.title}</h3>
-                <span>進入內容</span>
-              </a>
+          <div className="role-grid">
+            {homepage.roles.map((role, index) => (
+              <article key={role.title} className="role-card">
+                <span className="role-icon">{roleIcons[index] || "✨"}</span>
+                <h3>{role.title}</h3><p>{role.description}</p>
+                <a href="#journey">看看接下來怎麼走 <span>→</span></a>
+              </article>
             ))}
           </div>
         </section>
 
-        <section className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">Start Here</p>
-            <h2>依角色進入，不同身分有不同任務。</h2>
+        <section id="journey" className="section-block journey-section">
+          <div className="section-heading journey-heading">
+            <div><p className="eyebrow">90 天成長路線</p><h2>從認識自己，到能陪伴別人。</h2></div>
+            <p>這不是 90 天衝刺，而是一條可以持續走下去的成長路。每個階段只專注一件最重要的事。</p>
           </div>
-          <div className="role-grid">
-            {homepage.roles.map((role) => (
-              <article key={role.title} className="role-card">
-                <h3>{role.title}</h3>
-                <p>{role.description}</p>
+          <figure className="journey-illustration"><img src="/journey-90-days.webp" alt="五力夥伴沿著三階段道路，從探索、練習走向穩定陪伴" /></figure>
+          <div className="journey-flow">
+            {journey.map((stage, index) => (
+              <article key={stage.days} className="journey-step">
+                <div className="step-top"><span className="step-number">{index + 1}</span><span className="step-icon">{stage.icon}</span></div>
+                <p className="step-days">{stage.days}</p><h3>{stage.title}</h3><p>{stage.copy}</p><strong>{stage.action}</strong>
               </article>
             ))}
           </div>
         </section>
 
         <section className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">五力分類</p>
-            <h2>每一力都有自己的定位與陪跑方式。</h2>
-          </div>
+          <div className="section-heading split-heading"><div><p className="eyebrow">五力分工</p><h2>你不必什麼都會，團隊本來就該互相接力。</h2></div><p>點進每一力，看看這類教練會如何幫助夥伴。</p></div>
           <div className="power-grid">
             {homepage.powers.map((power, index) => (
               <a key={power.pageId} className={`power-link-card power-${index % 5}`} href={power.href}>
-                <span className="power-flower" aria-hidden="true">✿</span>
-                <h3>{power.title}</h3>
-                <p>{power.description}</p>
+                <span className="power-flower" aria-hidden="true">✿</span><h3>{power.title}</h3><p>{power.description}</p><strong>認識這一力 →</strong>
               </a>
             ))}
           </div>
         </section>
 
-        <section id="journey" className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">90 天 SOP</p>
-            <h2>公開 SOP 還在建置中，但資料結構已經接上。</h2>
-          </div>
-          <div className="status-strip">
-            <div>
-              <strong>{publicSops.length}</strong>
-              <span>已公開 SOP</span>
-            </div>
-            <div>
-              <strong>{pendingSops.length}</strong>
-              <span>待公開 SOP</span>
-            </div>
-          </div>
-          <div className="sop-grid">
-            {(publicSops.length ? publicSops : pendingSops).map((item) => (
-              <a key={item.href} className="sop-card" href={item.href}>
-                <div className="sop-meta">
-                  <span>{item.phase}</span>
-                  <span>{item.status}</span>
-                </div>
-                <h3>{item.title}</h3>
-                <p>{item.powers.join("・") || "共通制度"}</p>
-                <small>{item.websitePublic ? "已對站上公開" : "尚未設為網站公開"}</small>
-              </a>
-            ))}
-          </div>
+        <section className="section-block action-panel">
+          <div><p className="eyebrow">今天就能開始</p><h2>不知道從哪裡開始？先完成五力測驗。</h2><p>測驗不是考試，而是一場認識自己的對話。完成後，再和帶領人一起確認最適合你的第一步。</p></div>
+          <a className="primary-action" href="https://quiz.sanq.ccwu.cc">開始五力測驗</a>
         </section>
 
-        <section className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">工具與表單</p>
-            <h2>資源清單已接上，公開與內部資料會分流。</h2>
-          </div>
-          <div className="status-strip">
-            <div>
-              <strong>{publicResources.length}</strong>
-              <span>可公開資源</span>
-            </div>
-            <div>
-              <strong>{internalResources.length}</strong>
-              <span>內部或待整理</span>
-            </div>
-          </div>
-          <div className="resource-grid">
-            {(publicResources.length ? publicResources : homepage.resourceItems.filter((item) => !item.containsPersonalData)).map(
-              (item) => (
-                <article key={item.href} className="resource-card">
-                  <div className="resource-meta">
-                    <span>{item.type}</span>
-                    <span>{item.status}</span>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.purpose}</p>
-                  <div className="resource-actions">
-                    <a href={item.href}>查看說明</a>
-                    {item.officialUrl ? (
-                      <a href={item.officialUrl} target="_blank" rel="noreferrer">
-                        前往正式連結
-                      </a>
-                    ) : null}
-                  </div>
-                </article>
-              ),
-            )}
-          </div>
-        </section>
+        {publicSops.length > 0 ? <section className="section-block"><div className="section-heading"><p className="eyebrow">可使用的陪跑指南</p><h2>需要時再打開，照著一步一步做。</h2></div><div className="sop-grid">{publicSops.map((item) => <a key={item.href} className="sop-card" href={item.href}><div className="sop-meta"><span>{item.phase}</span></div><h3>{item.title}</h3><p>{item.powers.join("・") || "所有教練適用"}</p><small>打開指南 →</small></a>)}</div></section> : null}
 
-        <section className="section-block">
-          <div className="section-heading">
-            <p className="eyebrow">FAQ</p>
-            <h2>先把容易混淆的地方說清楚。</h2>
-          </div>
-          <div className="faq-list">
-            {homepage.faq.map((item) => (
-              <details key={item.question} className="faq-item">
-                <summary>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        {publicResources.length > 0 ? <section className="section-block"><div className="section-heading"><p className="eyebrow">實用工具</p><h2>把常用表單與工具放在伸手可及的地方。</h2></div><div className="resource-grid">{publicResources.map((item) => <article key={item.href} className="resource-card"><span className="resource-icon">🧰</span><h3>{item.title}</h3><p>{item.purpose}</p><div className="resource-actions"><a href={item.href}>查看使用方式</a>{item.officialUrl ? <a href={item.officialUrl} target="_blank" rel="noreferrer">開啟工具</a> : null}</div></article>)}</div></section> : null}
 
-        <AcademyNotionPage pageId={rootPageId} recordMap={recordMap} />
+        <section className="section-block faq-section">
+          <div className="section-heading"><p className="eyebrow">常見問題</p><h2>你可能正在想這些事。</h2></div>
+          <div className="faq-list">{homepage.faq.map((item) => <details key={item.question} className="faq-item"><summary>{item.question}<span>＋</span></summary><p>{item.answer}</p></details>)}</div>
+        </section>
       </main>
     );
   } catch {
-    return (
-      <main className="academy-shell">
-        <section className="academy-hero">
-          <div>
-            <p className="eyebrow">Academy v1</p>
-            <h1>五力教練學院</h1>
-            <p className="lede">
-              網站端已經準備好接 Notion，現在差最後一段公開權限與 page ID 連接。
-            </p>
-          </div>
-          <aside className="hero-note">
-            <span>接線狀態</span>
-            <strong>前端完成，內容待公開</strong>
-            <p>這樣做的好處是，不會因為 Notion 尚未發布就讓整個 academy 壞掉。</p>
-          </aside>
-        </section>
-
-        <NotionConnectionState pageId={rootPageId} />
-      </main>
-    );
+    return <main className="academy-shell"><section className="academy-hero"><div className="academy-hero-copy"><p className="eyebrow">五力教練學院</p><h1>一起找到適合你的成長方式</h1><p className="lede">內容正在整理中。你可以先完成五力測驗，從認識自己的優勢開始。</p><a className="primary-action" href="https://quiz.sanq.ccwu.cc">開始五力測驗</a></div><figure className="academy-garden"><img src="/five-strengths-garden.webp" alt="五力種子夥伴一起學習與成長" /></figure></section></main>;
   }
 }
