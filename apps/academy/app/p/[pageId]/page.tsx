@@ -18,7 +18,8 @@ export default async function AcademySubPage({
     return (
       <main className="academy-shell academy-detail-shell">
         <section className="detail-hero">
-          <p className="eyebrow">Academy Page</p>
+          <a className="detail-back" href="/">← 回到五力教練學院</a>
+          <p className="eyebrow">教練實作指南</p>
           <h1>{title}</h1>
         </section>
 
