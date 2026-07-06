@@ -38,6 +38,13 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--moss);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
 .academy-shell {
   width: min(1180px, calc(100vw - 32px));
   margin: 0 auto;

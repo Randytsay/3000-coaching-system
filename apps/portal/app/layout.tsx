@@ -35,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="https://sanq.ccwu.cc" className="nav-item">🏠 首頁</a>
               <a href="https://academy.sanq.ccwu.cc" className="nav-item">📖 教練學院</a>
               <a href="https://academy.sanq.ccwu.cc#journey" className="nav-item">🚩 90天陪跑</a>
-              <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn">🎯 開始測驗</a>
+              <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn" target="_blank" rel="noopener noreferrer">🎯 開始測驗 ↗</a>
             </nav>
           </div>
         </header>

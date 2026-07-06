@@ -43,6 +43,13 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
 .portal-shell {
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;

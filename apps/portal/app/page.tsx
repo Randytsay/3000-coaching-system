@@ -70,8 +70,8 @@ export default function PortalHome() {
           </p>
 
           <div className="hero-actions">
-            <a className="primary-link" href="https://quiz.sanq.ccwu.cc">
-              💖 開始天賦測驗
+            <a className="primary-link" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">
+              💖 開始天賦測驗 ↗
             </a>
             <a className="secondary-link" href="https://academy.sanq.ccwu.cc">
               📖 進入教練學院
@@ -100,7 +100,7 @@ export default function PortalHome() {
       {/* Pathways Grid */}
       <section className="path-grid">
         {pathways.map((pathway) => (
-          <a key={pathway.title} className="path-card" href={pathway.href}>
+          <a key={pathway.title} className="path-card" href={pathway.href} target={pathway.href.includes("quiz.sanq") ? "_blank" : undefined} rel={pathway.href.includes("quiz.sanq") ? "noopener noreferrer" : undefined}>
             <span className="path-index">{pathway.index}</span>
             {pathway.art}
             <h2>{pathway.title}</h2>

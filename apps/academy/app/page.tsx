@@ -34,7 +34,7 @@ export default async function AcademyHome() {
             <p className="lede">不論你是剛加入的夥伴，或正在學習帶人的教練，這裡會告訴你：現在在哪裡、下一步做什麼，以及需要誰來陪你。</p>
             <div className="hero-actions">
               <a className="primary-action" href="#start">找到我的下一步</a>
-              <a className="text-action" href="https://quiz.sanq.ccwu.cc">先做五力測驗 <span>→</span></a>
+              <a className="text-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">先做五力測驗 <span>↗</span></a>
             </div>
           </div>
           <figure className="academy-garden">
@@ -93,7 +93,7 @@ export default async function AcademyHome() {
 
         <section className="section-block action-panel">
           <div><p className="eyebrow">今天就能開始</p><h2>不知道從哪裡開始？先完成五力測驗。</h2><p>測驗不是考試，而是一場認識自己的對話。完成後，再和帶領人一起確認最適合你的第一步。</p></div>
-          <a className="primary-action" href="https://quiz.sanq.ccwu.cc">開始五力測驗</a>
+          <a className="primary-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">開始五力測驗 ↗</a>
         </section>
 
         {publicSops.length > 0 ? <section className="section-block"><div className="section-heading"><p className="eyebrow">可使用的陪跑指南</p><h2>需要時再打開，照著一步一步做。</h2></div><div className="sop-grid">{publicSops.map((item) => <a key={item.href} className="sop-card" href={item.href}><div className="sop-meta"><span>{item.phase}</span></div><h3>{item.title}</h3><p>{item.powers.join("・") || "所有教練適用"}</p><small>打開指南 →</small></a>)}</div></section> : null}
@@ -107,6 +107,6 @@ export default async function AcademyHome() {
       </main>
     );
   } catch {
-    return <main className="academy-shell"><section className="academy-hero"><div className="academy-hero-copy"><p className="eyebrow">五力教練學院</p><h1>一起找到適合你的成長方式</h1><p className="lede">內容正在整理中。你可以先完成五力測驗，從認識自己的優勢開始。</p><a className="primary-action" href="https://quiz.sanq.ccwu.cc">開始五力測驗</a></div><figure className="academy-garden"><img src="/five-strengths-garden.webp" alt="五力種子夥伴一起學習與成長" /></figure></section></main>;
+    return <main className="academy-shell"><section className="academy-hero"><div className="academy-hero-copy"><p className="eyebrow">五力教練學院</p><h1>一起找到適合你的成長方式</h1><p className="lede">內容正在整理中。你可以先完成五力測驗，從認識自己的優勢開始。</p><a className="primary-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">開始五力測驗 ↗</a></div><figure className="academy-garden"><img src="/five-strengths-garden.webp" alt="五力種子夥伴一起學習與成長" /></figure></section></main>;
   }
 }
