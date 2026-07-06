@@ -8,6 +8,7 @@ const links = [
   { href: "/", label: "教練學院", icon: "📖", match: "academy" },
   { href: "/#identity-map", label: "找我的路", icon: "🧭", match: "identity" },
   { href: "/#journey", label: "90天陪跑", icon: "🚩", match: "journey" },
+  { href: "/sitemap", label: "網站地圖", icon: "🗺️", match: "sitemap" },
 ];
 
 export function SiteHeader() {
@@ -32,7 +33,7 @@ export function SiteHeader() {
         </button>
         <nav id="site-navigation" className={`nav-links ${open ? "is-open" : ""}`} aria-label="主要導覽">
           {links.map((item) => {
-            const active = item.match === "academy" && pathname === "/" || item.match === "academy" && pathname.startsWith("/p/");
+            const active = item.match === "academy" && pathname === "/" || item.match === "academy" && pathname.startsWith("/p/") || item.match === "sitemap" && pathname === "/sitemap";
             return <a key={item.label} href={item.href} className={`nav-item ${active ? "is-active" : ""}`} aria-current={active ? "page" : undefined} onClick={() => setOpen(false)}><span>{item.icon}</span>{item.label}</a>;
           })}
           <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>🎯 開始測驗 ↗</a>

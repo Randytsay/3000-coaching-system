@@ -18,18 +18,18 @@ const journey = [
 const roleIcons = ["🌼", "🌱", "🌳", "🧭"];
 
 const roleTargets: Record<string, { href: string; action: string }> = {
-  "一般夥伴": { href: "#learner-paths", action: "找到我目前的學習階段" },
-  "準教練": { href: "#learner-paths", action: "查看養成五階段" },
+  "一般夥伴": { href: "#stage-explore", action: "從天賦探索開始" },
+  "準教練": { href: "#stage-foundations", action: "進入基礎教練課" },
   "正式教練": { href: "#coach-paths", action: "進入五力教練專區" },
   "總教練": { href: "#lead-coach", action: "查看總教練工作台" },
 };
 
 const learnerStages = [
-  { icon: "🔎", title: "1｜天賦探索中", copy: "剛加入或還不確定方向，先完成五力測驗與第一次對談。", href: "/p/393716701898811caa1fe8b85e655f9f", action: "開始認識自己" },
-  { icon: "📚", title: "2｜基礎學習中", copy: "正在建立共同語言，練習傾聽、提問、回饋與基本界線。", href: "/p/39371670189881ea819bd50a5497d574", action: "查看基礎課" },
-  { icon: "🧩", title: "3｜專項練習中", copy: "已找到主修方向，開始學習關係、招募、零售、工具或 AI 專項。", href: "/p/393716701898810eae35c657c209a2a2", action: "進入專項訓練" },
-  { icon: "👣", title: "4｜跟班實習中", copy: "跟著教練觀察與實作，在真實陪跑中取得具體回饋。", href: "/p/393716701898810c882af8fa81e75609", action: "查看實習要求" },
-  { icon: "🏅", title: "5｜準備認證中", copy: "整理成果、接受能力評量，確認可以安全而穩定地陪伴夥伴。", href: "/p/39371670189881d0b4eef78a45293865", action: "查看認證標準" },
+  { id: "stage-explore", icon: "🔎", title: "1｜天賦探索中", copy: "剛加入或還不確定方向，先完成五力測驗與第一次對談。", href: "/p/393716701898811caa1fe8b85e655f9f", action: "開始認識自己" },
+  { id: "stage-foundations", icon: "📚", title: "2｜基礎學習中", copy: "正在建立共同語言，練習傾聽、提問、回饋與基本界線。", href: "/p/39371670189881ea819bd50a5497d574", action: "查看基礎課" },
+  { id: "stage-specialty", icon: "🧩", title: "3｜專項練習中", copy: "已找到主修方向，開始學習關係、招募、零售、工具或 AI 專項。", href: "/p/393716701898810eae35c657c209a2a2", action: "進入專項訓練" },
+  { id: "stage-internship", icon: "👣", title: "4｜跟班實習中", copy: "跟著教練觀察與實作，在真實陪跑中取得具體回饋。", href: "/p/393716701898810c882af8fa81e75609", action: "查看實習要求" },
+  { id: "stage-certification", icon: "🏅", title: "5｜準備認證中", copy: "整理成果、接受能力評量，確認可以安全而穩定地陪伴夥伴。", href: "/p/39371670189881d0b4eef78a45293865", action: "查看認證標準" },
 ];
 
 export default async function AcademyHome() {
@@ -83,7 +83,7 @@ export default async function AcademyHome() {
         <section id="learner-paths" className="section-block identity-section">
           <div className="section-heading split-heading"><div><p className="eyebrow">學習中的夥伴</p><h2>我走到哪裡，就從那裡繼續。</h2></div><p>不必從頭讀到尾。依照你目前的狀態，直接打開最需要的階段。</p></div>
           <div className="learner-stage-grid">
-            {learnerStages.map((stage) => <TrackLink key={stage.title} className="learner-stage-card" href={stage.href} eventName="academy_learning_stage" eventData={{ stage: stage.title }}><span className="stage-illustration">{stage.icon}</span><h3>{stage.title}</h3><p>{stage.copy}</p><strong>{stage.action} →</strong></TrackLink>)}
+            {learnerStages.map((stage) => <TrackLink id={stage.id} key={stage.title} className="learner-stage-card" href={stage.href} eventName="academy_learning_stage" eventData={{ stage: stage.title }}><span className="stage-illustration">{stage.icon}</span><h3>{stage.title}</h3><p>{stage.copy}</p><strong>{stage.action} →</strong></TrackLink>)}
           </div>
         </section>
 

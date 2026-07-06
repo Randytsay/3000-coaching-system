@@ -16,6 +16,7 @@ export function SiteHeader() {
           <a href="https://academy.sanq.ccwu.cc" className="nav-item" onClick={() => setOpen(false)}>📖 教練學院</a>
           <a href="https://academy.sanq.ccwu.cc/#identity-map" className="nav-item" onClick={() => setOpen(false)}>🧭 找我的路</a>
           <a href="https://academy.sanq.ccwu.cc/#journey" className="nav-item" onClick={() => setOpen(false)}>🚩 90天陪跑</a>
+          <a href="https://academy.sanq.ccwu.cc/sitemap" className="nav-item" onClick={() => setOpen(false)}>🗺️ 網站地圖</a>
           <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>🎯 開始測驗 ↗</a>
         </nav>
       </div>
