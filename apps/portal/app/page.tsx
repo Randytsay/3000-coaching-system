@@ -40,7 +40,7 @@ const pathways = [
   },
   {
     title: "啟動 90 天陪跑",
-    href: "https://academy.sanq.ccwu.cc#journey",
+    href: "https://academy.sanq.ccwu.cc/journey",
     copy: "從探索、啟動到節奏複製，讓熱情化為可持續的陪跑心法。",
     index: "03",
     art: (

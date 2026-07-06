@@ -13,7 +13,7 @@ const learnerPages = [
 ];
 
 const operations = [
-  { title: "90 天陪跑總覽", href: "/#journey", icon: "🚩" },
+  { title: "90 天多軌陪跑", href: "/journey", icon: "🚩" },
   { title: "個案啟動與分派", href: "/p/39371670189881f99fc6c5a30d5632b4", icon: "📥" },
   { title: "每週陪跑會談", href: "/p/3937167018988179be38dbb2c5da5a50", icon: "💬" },
   { title: "30／60／90 日回顧", href: "/p/393716701898814080e2e3834090f29b", icon: "📊" },
@@ -29,6 +29,6 @@ export default function SitemapPage() {
 
     <section className="sitemap-section"><div className="sitemap-section-head"><span>03</span><div><h2>我是總教練</h2><p>掌握分派、陪跑節奏與階段回顧。</p></div></div><div className="sitemap-link-grid operations-map">{operations.map((item) => <TrackLink key={item.title} href={item.href} eventName="sitemap_click" eventData={{ group: "lead_coach", destination: item.title }}><span>{item.icon}</span><div><h3>{item.title}</h3></div><strong>→</strong></TrackLink>)}</div></section>
 
-    <section className="sitemap-foundations"><h2>主要入口</h2><div><a href="https://sanq.ccwu.cc">🏠 團隊首頁</a><a href="/">📖 五力教練學院</a><a href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">🎯 五力天賦測驗 ↗</a></div></section>
+    <section className="sitemap-foundations"><h2>主要入口</h2><div><a href="https://sanq.ccwu.cc">🏠 團隊首頁</a><a href="/">📖 五力教練學院</a><a href="/paths">🧭 身分導覽</a><a href="/journey">🚩 90 天多軌陪跑</a><a href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">🎯 五力天賦測驗 ↗</a></div></section>
   </main>;
 }

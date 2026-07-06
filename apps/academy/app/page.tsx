@@ -18,19 +18,11 @@ const journey = [
 const roleIcons = ["🌼", "🌱", "🌳", "🧭"];
 
 const roleTargets: Record<string, { href: string; action: string }> = {
-  "一般夥伴": { href: "#stage-explore", action: "從天賦探索開始" },
-  "準教練": { href: "#stage-foundations", action: "進入基礎教練課" },
-  "正式教練": { href: "#coach-paths", action: "進入五力教練專區" },
-  "總教練": { href: "#lead-coach", action: "查看總教練工作台" },
+  "一般夥伴": { href: "/paths#general", action: "查看一般夥伴下一步" },
+  "準教練": { href: "/paths#trainee", action: "查看準教練養成路線" },
+  "正式教練": { href: "/paths#coaches", action: "進入五力教練入口" },
+  "總教練": { href: "/paths#lead", action: "進入總教練工作台" },
 };
-
-const learnerStages = [
-  { id: "stage-explore", icon: "🔎", title: "1｜天賦探索中", copy: "剛加入或還不確定方向，先完成五力測驗與第一次對談。", href: "/p/393716701898811caa1fe8b85e655f9f", action: "開始認識自己" },
-  { id: "stage-foundations", icon: "📚", title: "2｜基礎學習中", copy: "正在建立共同語言，練習傾聽、提問、回饋與基本界線。", href: "/p/39371670189881ea819bd50a5497d574", action: "查看基礎課" },
-  { id: "stage-specialty", icon: "🧩", title: "3｜專項練習中", copy: "已找到主修方向，開始學習關係、招募、零售、工具或 AI 專項。", href: "/p/393716701898810eae35c657c209a2a2", action: "進入專項訓練" },
-  { id: "stage-internship", icon: "👣", title: "4｜跟班實習中", copy: "跟著教練觀察與實作，在真實陪跑中取得具體回饋。", href: "/p/393716701898810c882af8fa81e75609", action: "查看實習要求" },
-  { id: "stage-certification", icon: "🏅", title: "5｜準備認證中", copy: "整理成果、接受能力評量，確認可以安全而穩定地陪伴夥伴。", href: "/p/39371670189881d0b4eef78a45293865", action: "查看認證標準" },
-];
 
 export default async function AcademyHome() {
   const rootPageId = getAcademyRootPageId();
@@ -49,7 +41,7 @@ export default async function AcademyHome() {
             <h1>{title}</h1>
             <p className="lede">不論你是剛加入的夥伴，或正在學習帶人的教練，這裡會告訴你：現在在哪裡、下一步做什麼，以及需要誰來陪你。</p>
             <div className="hero-actions">
-              <TrackLink className="primary-action" href="#identity-map" eventName="academy_find_path">找到我的下一步</TrackLink>
+              <TrackLink className="primary-action" href="/paths" eventName="academy_find_path">找到我的下一步</TrackLink>
               <TrackLink className="text-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer" eventName="academy_quiz_click" eventData={{ placement: "hero" }}>先做五力測驗 <span>↗</span></TrackLink>
             </div>
           </div>
@@ -74,16 +66,9 @@ export default async function AcademyHome() {
               <article key={role.title} className="role-card">
                 <span className="role-icon">{roleIcons[index] || "✨"}</span>
                 <h3>{role.title}</h3><p>{role.description}</p>
-                <TrackLink href={roleTargets[role.title]?.href || "#journey"} eventName="academy_role_selected" eventData={{ role: role.title }}>{roleTargets[role.title]?.action || "看看接下來怎麼走"} <span>→</span></TrackLink>
+                <TrackLink href={roleTargets[role.title]?.href || "/paths"} eventName="academy_role_selected" eventData={{ role: role.title }}>{roleTargets[role.title]?.action || "看看接下來怎麼走"} <span>→</span></TrackLink>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section id="learner-paths" className="section-block identity-section">
-          <div className="section-heading split-heading"><div><p className="eyebrow">學習中的夥伴</p><h2>我走到哪裡，就從那裡繼續。</h2></div><p>不必從頭讀到尾。依照你目前的狀態，直接打開最需要的階段。</p></div>
-          <div className="learner-stage-grid">
-            {learnerStages.map((stage) => <TrackLink id={stage.id} key={stage.title} className="learner-stage-card" href={stage.href} eventName="academy_learning_stage" eventData={{ stage: stage.title }}><span className="stage-illustration">{stage.icon}</span><h3>{stage.title}</h3><p>{stage.copy}</p><strong>{stage.action} →</strong></TrackLink>)}
           </div>
         </section>
 
@@ -101,6 +86,7 @@ export default async function AcademyHome() {
               </article>
             ))}
           </div>
+          <TrackLink className="journey-more" href="/journey" eventName="academy_journey_open">查看完整多軌陪跑安排 →</TrackLink>
         </section>
 
         <section id="coach-paths" className="section-block">
@@ -112,11 +98,6 @@ export default async function AcademyHome() {
               </TrackLink>
             ))}
           </div>
-        </section>
-
-        <section id="lead-coach" className="section-block lead-coach-panel">
-          <div className="lead-coach-icon">🧭</div><div><p className="eyebrow">總教練入口</p><h2>掌握全局、安排接力，也照顧教練。</h2><p>從個案啟動、教練媒合、品質督導到卡關轉介，總教練負責讓整條陪跑線不中斷。</p></div>
-          <div className="lead-coach-actions"><TrackLink href="/p/39371670189881f99fc6c5a30d5632b4" eventName="academy_lead_coach_action" eventData={{ action: "case_assignment" }}>個案啟動與分派 →</TrackLink><TrackLink href="/p/3937167018988179be38dbb2c5da5a50" eventName="academy_lead_coach_action" eventData={{ action: "weekly_review" }}>每週陪跑結構 →</TrackLink><TrackLink href="/p/393716701898814080e2e3834090f29b" eventName="academy_lead_coach_action" eventData={{ action: "review" }}>30／60／90 日回顧 →</TrackLink></div>
         </section>
 
         <section className="section-block action-panel">

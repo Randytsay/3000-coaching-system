@@ -14,8 +14,8 @@ export function SiteHeader() {
         <nav id="site-navigation" className={`nav-links ${open ? "is-open" : ""}`} aria-label="主要導覽">
           <a href="/" className="nav-item is-active" aria-current="page" onClick={() => setOpen(false)}>🏠 首頁</a>
           <a href="https://academy.sanq.ccwu.cc" className="nav-item" onClick={() => setOpen(false)}>📖 教練學院</a>
-          <a href="https://academy.sanq.ccwu.cc/#identity-map" className="nav-item" onClick={() => setOpen(false)}>🧭 找我的路</a>
-          <a href="https://academy.sanq.ccwu.cc/#journey" className="nav-item" onClick={() => setOpen(false)}>🚩 90天陪跑</a>
+          <a href="https://academy.sanq.ccwu.cc/paths" className="nav-item" onClick={() => setOpen(false)}>🧭 找我的路</a>
+          <a href="https://academy.sanq.ccwu.cc/journey" className="nav-item" onClick={() => setOpen(false)}>🚩 90天陪跑</a>
           <a href="https://academy.sanq.ccwu.cc/sitemap" className="nav-item" onClick={() => setOpen(false)}>🗺️ 網站地圖</a>
           <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>🎯 開始測驗 ↗</a>
         </nav>
