@@ -275,10 +275,10 @@ export const getAcademyHomepageData = cache(async () => {
     (item) => item.title && item.title !== "99｜封存區",
   );
 
-  const roles: RoleCard[] = extractHeadingParagraphPairs(startHereRecordMap, START_HERE_PAGE_ID).map((item) => ({
-    title: item.heading,
-    description: item.paragraph,
-  }));
+  const publicRoleNames = new Set(["一般夥伴", "準教練", "正式教練", "總教練"]);
+  const roles: RoleCard[] = extractHeadingParagraphPairs(startHereRecordMap, START_HERE_PAGE_ID)
+    .filter((item) => publicRoleNames.has(item.heading))
+    .map((item) => ({ title: item.heading, description: item.paragraph }));
 
   const powers: PowerCard[] = powerPages.map((item) => ({
     title: item.title,

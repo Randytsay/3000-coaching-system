@@ -1,4 +1,5 @@
 import { getAcademyHomepageData, getAcademyRootPageId, getPageRecordMap, getRendererPageTitle } from "../lib/notion";
+import { TrackLink } from "../components/track-link";
 
 export const revalidate = 300;
 
@@ -15,6 +16,21 @@ const journey = [
 ];
 
 const roleIcons = ["🌼", "🌱", "🌳", "🧭"];
+
+const roleTargets: Record<string, { href: string; action: string }> = {
+  "一般夥伴": { href: "#learner-paths", action: "找到我目前的學習階段" },
+  "準教練": { href: "#learner-paths", action: "查看養成五階段" },
+  "正式教練": { href: "#coach-paths", action: "進入五力教練專區" },
+  "總教練": { href: "#lead-coach", action: "查看總教練工作台" },
+};
+
+const learnerStages = [
+  { icon: "🔎", title: "1｜天賦探索中", copy: "剛加入或還不確定方向，先完成五力測驗與第一次對談。", href: "/p/393716701898811caa1fe8b85e655f9f", action: "開始認識自己" },
+  { icon: "📚", title: "2｜基礎學習中", copy: "正在建立共同語言，練習傾聽、提問、回饋與基本界線。", href: "/p/39371670189881ea819bd50a5497d574", action: "查看基礎課" },
+  { icon: "🧩", title: "3｜專項練習中", copy: "已找到主修方向，開始學習關係、招募、零售、工具或 AI 專項。", href: "/p/393716701898810eae35c657c209a2a2", action: "進入專項訓練" },
+  { icon: "👣", title: "4｜跟班實習中", copy: "跟著教練觀察與實作，在真實陪跑中取得具體回饋。", href: "/p/393716701898810c882af8fa81e75609", action: "查看實習要求" },
+  { icon: "🏅", title: "5｜準備認證中", copy: "整理成果、接受能力評量，確認可以安全而穩定地陪伴夥伴。", href: "/p/39371670189881d0b4eef78a45293865", action: "查看認證標準" },
+];
 
 export default async function AcademyHome() {
   const rootPageId = getAcademyRootPageId();
@@ -33,8 +49,8 @@ export default async function AcademyHome() {
             <h1>{title}</h1>
             <p className="lede">不論你是剛加入的夥伴，或正在學習帶人的教練，這裡會告訴你：現在在哪裡、下一步做什麼，以及需要誰來陪你。</p>
             <div className="hero-actions">
-              <a className="primary-action" href="#start">找到我的下一步</a>
-              <a className="text-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">先做五力測驗 <span>↗</span></a>
+              <TrackLink className="primary-action" href="#identity-map" eventName="academy_find_path">找到我的下一步</TrackLink>
+              <TrackLink className="text-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer" eventName="academy_quiz_click" eventData={{ placement: "hero" }}>先做五力測驗 <span>↗</span></TrackLink>
             </div>
           </div>
           <figure className="academy-garden">
@@ -47,7 +63,7 @@ export default async function AcademyHome() {
           {principles.map((item) => <article key={item.title} className="principle-card"><span>{item.icon}</span><div><h2>{item.title}</h2><p>{item.copy}</p></div></article>)}
         </section>
 
-        <section id="start" className="section-block start-section">
+        <section id="identity-map" className="section-block start-section">
           <div className="section-heading centered-heading">
             <p className="eyebrow">Start Here</p>
             <h2>你現在是哪一種角色？</h2>
@@ -58,9 +74,16 @@ export default async function AcademyHome() {
               <article key={role.title} className="role-card">
                 <span className="role-icon">{roleIcons[index] || "✨"}</span>
                 <h3>{role.title}</h3><p>{role.description}</p>
-                <a href="#journey">看看接下來怎麼走 <span>→</span></a>
+                <TrackLink href={roleTargets[role.title]?.href || "#journey"} eventName="academy_role_selected" eventData={{ role: role.title }}>{roleTargets[role.title]?.action || "看看接下來怎麼走"} <span>→</span></TrackLink>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section id="learner-paths" className="section-block identity-section">
+          <div className="section-heading split-heading"><div><p className="eyebrow">學習中的夥伴</p><h2>我走到哪裡，就從那裡繼續。</h2></div><p>不必從頭讀到尾。依照你目前的狀態，直接打開最需要的階段。</p></div>
+          <div className="learner-stage-grid">
+            {learnerStages.map((stage) => <TrackLink key={stage.title} className="learner-stage-card" href={stage.href} eventName="academy_learning_stage" eventData={{ stage: stage.title }}><span className="stage-illustration">{stage.icon}</span><h3>{stage.title}</h3><p>{stage.copy}</p><strong>{stage.action} →</strong></TrackLink>)}
           </div>
         </section>
 
@@ -80,20 +103,25 @@ export default async function AcademyHome() {
           </div>
         </section>
 
-        <section className="section-block">
+        <section id="coach-paths" className="section-block">
           <div className="section-heading split-heading"><div><p className="eyebrow">五力分工</p><h2>你不必什麼都會，團隊本來就該互相接力。</h2></div><p>點進每一力，看看這類教練會如何幫助夥伴。</p></div>
           <div className="power-grid">
             {homepage.powers.map((power, index) => (
-              <a key={power.pageId} className={`power-link-card power-${index % 5}`} href={power.href}>
+              <TrackLink key={power.pageId} className={`power-link-card power-${index % 5}`} href={power.href} eventName="academy_power_selected" eventData={{ power: power.title }}>
                 <span className="power-flower" aria-hidden="true">✿</span><h3>{power.title}</h3><p>{power.description}</p><strong>認識這一力 →</strong>
-              </a>
+              </TrackLink>
             ))}
           </div>
         </section>
 
+        <section id="lead-coach" className="section-block lead-coach-panel">
+          <div className="lead-coach-icon">🧭</div><div><p className="eyebrow">總教練入口</p><h2>掌握全局、安排接力，也照顧教練。</h2><p>從個案啟動、教練媒合、品質督導到卡關轉介，總教練負責讓整條陪跑線不中斷。</p></div>
+          <div className="lead-coach-actions"><TrackLink href="/p/39371670189881f99fc6c5a30d5632b4" eventName="academy_lead_coach_action" eventData={{ action: "case_assignment" }}>個案啟動與分派 →</TrackLink><TrackLink href="/p/3937167018988179be38dbb2c5da5a50" eventName="academy_lead_coach_action" eventData={{ action: "weekly_review" }}>每週陪跑結構 →</TrackLink><TrackLink href="/p/393716701898814080e2e3834090f29b" eventName="academy_lead_coach_action" eventData={{ action: "review" }}>30／60／90 日回顧 →</TrackLink></div>
+        </section>
+
         <section className="section-block action-panel">
           <div><p className="eyebrow">今天就能開始</p><h2>不知道從哪裡開始？先完成五力測驗。</h2><p>測驗不是考試，而是一場認識自己的對話。完成後，再和帶領人一起確認最適合你的第一步。</p></div>
-          <a className="primary-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">開始五力測驗 ↗</a>
+          <TrackLink className="primary-action" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer" eventName="academy_quiz_click" eventData={{ placement: "mid_page" }}>開始五力測驗 ↗</TrackLink>
         </section>
 
         {publicSops.length > 0 ? <section className="section-block"><div className="section-heading"><p className="eyebrow">可使用的陪跑指南</p><h2>需要時再打開，照著一步一步做。</h2></div><div className="sop-grid">{publicSops.map((item) => <a key={item.href} className="sop-card" href={item.href}><div className="sop-meta"><span>{item.phase}</span></div><h3>{item.title}</h3><p>{item.powers.join("・") || "所有教練適用"}</p><small>打開指南 →</small></a>)}</div></section> : null}

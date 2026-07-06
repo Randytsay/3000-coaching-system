@@ -70,12 +70,12 @@ export default function PortalHome() {
           </p>
 
           <div className="hero-actions">
-            <a className="primary-link" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer">
+            <TrackLink className="primary-link" href="https://quiz.sanq.ccwu.cc" target="_blank" rel="noopener noreferrer" eventName="portal_quiz_click" eventData={{ placement: "hero" }}>
               💖 開始天賦測驗 ↗
-            </a>
-            <a className="secondary-link" href="https://academy.sanq.ccwu.cc">
+            </TrackLink>
+            <TrackLink className="secondary-link" href="https://academy.sanq.ccwu.cc" eventName="portal_academy_click" eventData={{ placement: "hero" }}>
               📖 進入教練學院
-            </a>
+            </TrackLink>
           </div>
         </section>
         
@@ -100,14 +100,15 @@ export default function PortalHome() {
       {/* Pathways Grid */}
       <section className="path-grid">
         {pathways.map((pathway) => (
-          <a key={pathway.title} className="path-card" href={pathway.href} target={pathway.href.includes("quiz.sanq") ? "_blank" : undefined} rel={pathway.href.includes("quiz.sanq") ? "noopener noreferrer" : undefined}>
+          <TrackLink key={pathway.title} className="path-card" href={pathway.href} target={pathway.href.includes("quiz.sanq") ? "_blank" : undefined} rel={pathway.href.includes("quiz.sanq") ? "noopener noreferrer" : undefined} eventName="portal_pathway_click" eventData={{ pathway: pathway.title }}>
             <span className="path-index">{pathway.index}</span>
             {pathway.art}
             <h2>{pathway.title}</h2>
             <p>{pathway.copy}</p>
-          </a>
+          </TrackLink>
         ))}
       </section>
     </main>
   );
 }
+import { TrackLink } from "../components/track-link";

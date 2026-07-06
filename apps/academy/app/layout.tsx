@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Marcellus, Noto_Sans_TC } from "next/font/google";
 import "react-notion-x/styles.css";
+import { PageTools } from "../components/page-tools";
+import { SiteHeader } from "../components/site-header";
 import "./globals.css";
 
 const display = Marcellus({
@@ -27,20 +30,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-Hant" className={`${display.variable} ${body.variable}`}>
       <body>
-        <header className="site-header">
-          <div className="nav-container">
-            <a href="https://sanq.ccwu.cc" className="logo">
-              <span className="logo-sparkle">✨</span> 姍謙大C 五力教練系統
-            </a>
-            <nav className="nav-links">
-              <a href="https://sanq.ccwu.cc" className="nav-item">🏠 首頁</a>
-              <a href="https://academy.sanq.ccwu.cc" className="nav-item">📖 教練學院</a>
-              <a href="https://academy.sanq.ccwu.cc#journey" className="nav-item">🚩 90天陪跑</a>
-              <a href="https://quiz.sanq.ccwu.cc" className="nav-item nav-btn" target="_blank" rel="noopener noreferrer">🎯 開始測驗 ↗</a>
-            </nav>
-          </div>
-        </header>
+        <SiteHeader />
         {children}
+        <PageTools />
+        <Analytics />
       </body>
     </html>
   );
