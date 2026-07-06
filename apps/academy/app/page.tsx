@@ -1,5 +1,6 @@
 import { getAcademyHomepageData, getAcademyRootPageId, getPageRecordMap, getRendererPageTitle } from "../lib/notion";
 import { TrackLink } from "../components/track-link";
+import { NotionSyncBadge } from "../components/notion-sync-badge";
 
 export const revalidate = 300;
 
@@ -60,6 +61,7 @@ export default async function AcademyHome() {
             <p className="eyebrow">Start Here</p>
             <h2>你現在是哪一種角色？</h2>
             <p>不用一次讀完整個網站。先找到自己的身分，只看此刻真正需要的內容。</p>
+            <NotionSyncBadge />
           </div>
           <div className="role-grid">
             {homepage.roles.map((role, index) => (
@@ -90,7 +92,7 @@ export default async function AcademyHome() {
         </section>
 
         <section id="coach-paths" className="section-block">
-          <div className="section-heading split-heading"><div><p className="eyebrow">五力分工</p><h2>你不必什麼都會，團隊本來就該互相接力。</h2></div><p>點進每一力，看看這類教練會如何幫助夥伴。</p></div>
+          <div className="section-heading split-heading"><div><p className="eyebrow">五力分工</p><h2>你不必什麼都會，團隊本來就該互相接力。</h2><NotionSyncBadge /></div><p>點進每一力，看看這類教練會如何幫助夥伴。</p></div>
           <div className="power-grid">
             {homepage.powers.map((power, index) => (
               <TrackLink key={power.pageId} className={`power-link-card power-${index % 5}`} href={power.href} eventName="academy_power_selected" eventData={{ power: power.title }}>

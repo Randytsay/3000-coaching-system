@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { AcademyNotionPage } from "../../../components/notion-page";
 import { TrackLink } from "../../../components/track-link";
+import { NotionSyncBadge } from "../../../components/notion-sync-badge";
 import { coachPages, compactPageId } from "../../../lib/coach-navigation";
-import { getPageRecordMap, getRendererPageTitle } from "../../../lib/notion";
+import { getPageRecordMap, getRendererPageLastEdited, getRendererPageTitle } from "../../../lib/notion";
 
 export const revalidate = 300;
 
@@ -16,6 +17,7 @@ export default async function AcademySubPage({
   try {
     const recordMap = await getPageRecordMap(pageId);
     const title = getRendererPageTitle(recordMap);
+    const lastEdited = getRendererPageLastEdited(recordMap, pageId);
     const currentCoachIndex = coachPages.findIndex((coach) => compactPageId(coach.pageId) === compactPageId(pageId));
     const previousCoach = currentCoachIndex >= 0 ? coachPages[(currentCoachIndex - 1 + coachPages.length) % coachPages.length] : null;
     const nextCoach = currentCoachIndex >= 0 ? coachPages[(currentCoachIndex + 1) % coachPages.length] : null;
@@ -26,6 +28,7 @@ export default async function AcademySubPage({
           <a className="detail-back" href="/">← 回到五力教練學院</a>
           <p className="eyebrow">教練實作指南</p>
           <h1>{title}</h1>
+          <NotionSyncBadge lastEdited={lastEdited} />
         </section>
 
         {currentCoachIndex >= 0 ? <nav className="coach-switcher" aria-label="五力教練快速切換">

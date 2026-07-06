@@ -48,6 +48,11 @@ export function getRendererPageTitle(recordMap: ExtendedRecordMap) {
   return getPageTitle(recordMap) || "五力教練學院";
 }
 
+export function getRendererPageLastEdited(recordMap: ExtendedRecordMap, pageId: string) {
+  const block = getBlockValue(recordMap, normalizeId(pageId));
+  return block?.last_edited_time || null;
+}
+
 type SimpleLink = {
   title: string;
   pageId: string;
