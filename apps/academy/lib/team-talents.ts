@@ -295,6 +295,13 @@ function fallbackAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
   };
 }
 
+function extractJsonObject(content: string) {
+  const start = content.indexOf("{");
+  const end = content.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return content;
+  return content.slice(start, end + 1);
+}
+
 async function generateLlmAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
   const { apiKey, baseUrl, model } = getLlmConfig();
   if (!apiKey) return fallbackAnalysis(dashboard);
@@ -347,7 +354,7 @@ async function generateLlmAnalysis(dashboard: Omit<TalentDashboard, "analysis">)
 
     const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
     const content = data.choices?.[0]?.message?.content || "{}";
-    const parsed = JSON.parse(content) as Partial<TalentDashboard["analysis"]>;
+    const parsed = JSON.parse(extractJsonObject(content)) as Partial<TalentDashboard["analysis"]>;
     return {
       source: "llm" as const,
       title: parsed.title || "團隊天賦解析",
