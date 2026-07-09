@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTeamTalentDashboard } from "../../lib/team-talents";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "團隊天賦分佈｜五力教練學院",
