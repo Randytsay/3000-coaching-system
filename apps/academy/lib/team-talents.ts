@@ -296,10 +296,11 @@ function fallbackAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
 }
 
 function extractJsonObject(content: string) {
-  const start = content.indexOf("{");
-  const end = content.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) return content;
-  return content.slice(start, end + 1);
+  const withoutThinking = content.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+  const start = withoutThinking.indexOf("{");
+  const end = withoutThinking.lastIndexOf("}");
+  if (start === -1 || end === -1 || end <= start) return withoutThinking;
+  return withoutThinking.slice(start, end + 1);
 }
 
 async function generateLlmAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
