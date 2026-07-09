@@ -305,38 +305,37 @@ async function generateLlmAnalysis(dashboard: Omit<TalentDashboard, "analysis">)
     })),
   };
 
-  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.3,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: "你是團隊教練制度顧問。請用繁體中文，客觀、溫暖、務實地解析五力教練團隊分佈。不可誇大測驗效度，不可把問卷結果說成教練資格。只輸出 JSON。",
-        },
-        {
-          role: "user",
-          content: `根據以下團隊問卷統計，輸出 JSON，格式為 {"title": string, "summary": string, "strengths": string[], "blindSpots": string[], "suggestions": string[]}。每個陣列 3 點以內，每點 35 字以內。資料：${JSON.stringify(payload)}`,
-        },
-      ],
-    }),
-    next: { revalidate: 300 },
-  });
-
-  if (!response.ok) {
-    return { ...fallbackAnalysis(dashboard), title: "LLM 暫時無法產生解析，先顯示規則版觀察", setupMissing: [] };
-  }
-
-  const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
-  const content = data.choices?.[0]?.message?.content || "{}";
-
   try {
+    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.3,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content: "你是團隊教練制度顧問。請用繁體中文，客觀、溫暖、務實地解析五力教練團隊分佈。不可誇大測驗效度，不可把問卷結果說成教練資格。只輸出 JSON。",
+          },
+          {
+            role: "user",
+            content: `根據以下團隊問卷統計，輸出 JSON，格式為 {"title": string, "summary": string, "strengths": string[], "blindSpots": string[], "suggestions": string[]}。每個陣列 3 點以內，每點 35 字以內。資料：${JSON.stringify(payload)}`,
+          },
+        ],
+      }),
+      next: { revalidate: 300 },
+    });
+
+    if (!response.ok) {
+      return { ...fallbackAnalysis(dashboard), title: "LLM 暫時無法產生解析，先顯示規則版觀察", setupMissing: [] };
+    }
+
+    const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
+    const content = data.choices?.[0]?.message?.content || "{}";
     const parsed = JSON.parse(content) as Partial<TalentDashboard["analysis"]>;
     return {
       source: "llm" as const,
