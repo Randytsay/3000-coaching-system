@@ -3,10 +3,6 @@ import { createSign } from "node:crypto";
 const SPREADSHEET_ID = process.env.TEAM_TALENT_SPREADSHEET_ID || "1_qUkPpUqg_dzE9q7aJtxvhVoYYGO9hwKoIfCsE5pCr0";
 const SHEET_NAME = process.env.TEAM_TALENT_SHEET_NAME || "工作表1";
 const SHEET_GID = process.env.TEAM_TALENT_SHEET_GID || "0";
-const LLM_PROVIDER = process.env.LLM_PROVIDER || "openai";
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
-const MINIMAX_BASE_URL = process.env.MINIMAX_BASE_URL || "https://api.minimaxi.com/v1";
-const MINIMAX_MODEL = process.env.MINIMAX_MODEL || "MiniMax-M3";
 
 const headers = ["時間", "姓名", "主修天賦", "副修天賦", "關係分數", "工具分數", "零售分數", "招募分數", "自媒體分數", "AI意願"];
 const powers = ["關係教練", "工具教練", "零售教練", "招募教練", "自媒體/IP教練"];
@@ -253,11 +249,30 @@ function buildScoreAverages(people: TalentPerson[]) {
   }).sort((a, b) => b.average - a.average);
 }
 
+function getLlmConfig() {
+  const provider = process.env.LLM_PROVIDER === "minimax" ? "minimax" : "openai";
+  return provider === "minimax"
+    ? {
+        provider,
+        apiKey: process.env.MINIMAX_API_KEY,
+        baseUrl: process.env.MINIMAX_BASE_URL || "https://api.minimaxi.com/v1",
+        model: process.env.MINIMAX_MODEL || "MiniMax-M3",
+        requiredKey: "MINIMAX_API_KEY",
+      }
+    : {
+        provider,
+        apiKey: process.env.OPENAI_API_KEY,
+        baseUrl: "https://api.openai.com/v1",
+        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        requiredKey: "OPENAI_API_KEY",
+      };
+}
+
 function fallbackAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
   const top = dashboard.primaryDistribution[0];
   const missing = powers.filter((power) => !dashboard.primaryDistribution.some((item) => item.talent === power));
   const aiHot = dashboard.aiDistribution.find((item) => item.answer.includes("很想"));
-  const requiredKey = LLM_PROVIDER === "minimax" ? "MINIMAX_API_KEY" : "OPENAI_API_KEY";
+  const requiredKey = getLlmConfig().requiredKey;
 
   return {
     source: "rule" as const,
@@ -281,12 +296,8 @@ function fallbackAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
 }
 
 async function generateLlmAnalysis(dashboard: Omit<TalentDashboard, "analysis">) {
-  const provider = LLM_PROVIDER === "minimax" ? "minimax" : "openai";
-  const apiKey = provider === "minimax" ? process.env.MINIMAX_API_KEY : process.env.OPENAI_API_KEY;
+  const { apiKey, baseUrl, model } = getLlmConfig();
   if (!apiKey) return fallbackAnalysis(dashboard);
-
-  const baseUrl = provider === "minimax" ? MINIMAX_BASE_URL : "https://api.openai.com/v1";
-  const model = provider === "minimax" ? MINIMAX_MODEL : OPENAI_MODEL;
 
   const payload = {
     totalPeople: dashboard.people.length,
